@@ -27,7 +27,10 @@ def convert_excel_to_srt():
     uploaded_file.save(filepath)
 
     # Load Excel
-    df = pd.read_excel(filepath)
+    try:
+        df = pd.read_excel(filepath)
+    except Exception as e:
+        return f"Error reading Excel file: {e}", 400
     
     # Map selection to column
     language_map = {
@@ -54,3 +57,6 @@ def convert_excel_to_srt():
 
     return send_from_directory(app.config['OUTPUT_FOLDER'], f'{language}.srt', as_attachment=True)
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
