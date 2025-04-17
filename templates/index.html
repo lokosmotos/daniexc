@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel to SRT Converter</title>
+</head>
+<body>
+    <h2>Upload Excel and Convert to SRT</h2>
+    <form action="/convert" method="post" enctype="multipart/form-data">
+        <label>Select Excel file:</label>
+        <input type="file" name="excel" accept=".xlsx,.xls" required><br><br>
+
+        <label>Select language:</label>
+        <select name="language" required>
+            <option value="ov">Original Audio (OV)</option>
+            <option value="spanish">Spanish Subtitles</option>
+            <option value="english">English Subtitles</option>
+        </select><br><br>
+
+        <button type="submit">Convert to SRT</button>
+    </form>
+</body>
+</html>
