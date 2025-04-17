@@ -1,47 +1,56 @@
-from flask import Flask, render_template, request, redirect, session, send_file
-import pandas as pd
 import os
-from io import BytesIO
+from flask import Flask, render_template, request, send_from_directory
+import pandas as pd
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'outputs'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
-PASSWORD = "dan123"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        if request.form['password'] == PASSWORD:
-            session['logged_in'] = True
-            return redirect('/upload')
-        else:
-            return "Wrong password. Try again."
-    return render_template("login.html")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
-    if not session.get('logged_in'):
-        return redirect('/')
-    if request.method == 'POST':
-        file = request.files['file']
-        if file.filename.endswith('.xlsx'):
-            df = pd.read_excel(file)
-            srt = convert_to_srt(df)
-            return send_file(BytesIO(srt.encode('utf-8')),
-                             download_name="output.srt",
-                             as_attachment=True)
-    return render_template("upload.html")
+@app.route('/convert', methods=['POST'])
+def convert_excel_to_srt():
+    uploaded_file = request.files['excel']
+    language = request.form['language']  # 'ov', 'spanish', or 'english'
 
-def convert_to_srt(df):
-    srt = ""
-    for i, row in df.iterrows():
-        start = row.get("start", "00:00:00,000")
-        end = row.get("end", "00:00:00,000")
-        text = row.get("text", "")
-        srt += f"{i+1}\n{start} --> {end}\n{text}\n\n"
-    return srt
+    if not uploaded_file.filename.endswith(('.xlsx', '.xls')):
+        return "Please upload a valid Excel file.", 400
 
-if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+    uploaded_file.save(filepath)
+
+    # Load Excel
+    df = pd.read_excel(filepath)
+    
+    # Map selection to column
+    language_map = {
+        'ov': 'OV DIALOGUES',
+        'spanish': 'SPANISH SUBTITLES',
+        'english': 'ENGLISH SUBTITLES'
+    }
+    col = language_map.get(language)
+    
+    if col not in df.columns:
+        return f"Column '{col}' not found in Excel.", 400
+
+    # Create SRT
+    lines = df[col].fillna('').tolist()
+    srt_path = os.path.join(app.config['OUTPUT_FOLDER'], f'{language}.srt')
+
+    with open(srt_path, 'w', encoding='utf-8') as f:
+        for i, line in enumerate(lines, start=1):
+            start_sec = i * 3
+            end_sec = start_sec + 2
+            f.write(f"{i}\n")
+            f.write(f"00:00:{start_sec:02},000 --> 00:00:{end_sec:02},000\n")
+            f.write(f"{line.strip()}\n\n")
+
+    return send_from_directory(app.config['OUTPUT_FOLDER'], f'{language}.srt', as_attachment=True)
+
