@@ -1,1 +1,21 @@
+/* Full CSS available in the GitHub repo */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f4e6;
+}
 
+.cat-button {
+  background: #ffd166;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cat-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Add more styles as needed */
