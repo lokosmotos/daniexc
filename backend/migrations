@@ -1,0 +1,12 @@
+CREATE TABLE interviews (
+    id SERIAL PRIMARY KEY,
+    candidate_id INT REFERENCES candidates(id),
+    time TIMESTAMPTZ NOT NULL,
+    google_calendar_event_id VARCHAR(255),
+    status VARCHAR(20) CHECK (status IN ('Scheduled', 'Completed', 'No-Show')) DEFAULT 'Scheduled',
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    feedback TEXT,
+    urgent_replacement_candidate BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
