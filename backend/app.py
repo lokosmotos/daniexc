@@ -1,47 +1,45 @@
 from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS
-import io
-import pandas as pd
-from messaging import send_sms_reminder
+import os
+from datetime import datetime, timedelta
+from messaging import (
+    send_interview_reminder,
+    send_no_show_alert,
+    send_standby_inquiry
+)
 
-app = Flask(__name__)
-CORS(app)
+# ... (previous imports and setup)
 
-# Mock database
-candidates_db = []
-interviews_db = []
-
-@app.route('/login', methods=['POST'])
-def login():
+@app.route('/candidates', methods=['POST'])
+def add_candidate():
     data = request.json
-    if data.get('username') == 'syida' and data.get('password') == '8888':
-        return jsonify({"success": True, "user": "Syida"})
-    return jsonify({"success": False}), 401
+    if not data.get('resume_url') and not data.get('no_resume_reason'):
+        return jsonify({"error": "Resume URL or reason required"}), 400
+    
+    # Validate Google Drive URL
+    if data.get('resume_url') and 'drive.google.com' not in data['resume_url']:
+        return jsonify({"error": "Only Google Drive links accepted"}), 400
+    
+    candidate = {
+        **data,
+        "created_at": datetime.now().isoformat(),
+        "status": "New"
+    }
+    candidates_db.append(candidate)
+    return jsonify({"success": True}), 201
 
-@app.route('/candidates', methods=['GET', 'POST'])
-def handle_candidates():
-    if request.method == 'POST':
-        candidate = request.json
-        if not candidate.get('resume') and not candidate.get('no_resume_reason'):
-            return jsonify({"error": "Resume or reason required"}), 400
-        candidates_db.append(candidate)
-        return jsonify({"success": True}), 201
-    return jsonify(candidates_db)
-
-@app.route('/interviews', methods=['POST'])
-def schedule_interview():
-    data = request.json
-    interviews_db.append(data)
-    send_sms_reminder(data['candidate_id'])
-    return jsonify({"success": True})
-
-@app.route('/export', methods=['GET'])
-def export_data():
-    df = pd.DataFrame(candidates_db)
-    output = io.BytesIO()
-    df.to_excel(output, index=False)
-    output.seek(0)
-    return send_file(output, mimetype='application/vnd.ms-excel')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+@app.route('/send-bulk-messages', methods=['POST'])
+def bulk_messaging():
+    message_type = request.json.get('type')
+    candidate_ids = request.json.get('candidate_ids', [])
+    
+    for candidate_id in candidate_ids:
+        candidate = next((c for c in candidates_db if c['id'] == candidate_id), None)
+        if candidate:
+            if message_type == 'interview_reminder':
+                send_interview_reminder(candidate)
+            elif message_type == 'no_show':
+                send_no_show_alert(candidate)
+            elif message_type == 'standby':
+                send_standby_inquiry(candidate)
+    
+    return jsonify({"success": True, "sent_count": len(candidate_ids)})
