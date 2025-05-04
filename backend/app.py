@@ -61,6 +61,24 @@ def send_bulk_messages():
         'standbys_contacted': len([r for r in standby_results if r])
     })
 
+# backend/app.py (add to your Flask app)
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/api/hiring-calc', methods=['POST'])
+def hiring_calc():
+    data = request.get_json()
+    needed = int(data.get("needed", 0))
+    no_show_rate = float(data.get("no_show_rate", 0.33))
+    
+    suggested = int(round(needed / (1 - no_show_rate)))
+    return jsonify({
+        "needed": needed,
+        "suggested": suggested,
+        "note": f"Based on a {int(no_show_rate * 100)}% no-show rate"
+    })
+
 
 @app.route('/')
 def index():
