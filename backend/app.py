@@ -69,6 +69,20 @@ def get_candidates():
         'status': c.status
     } for c in candidates])
 
+@app.route('/candidates', methods=['POST'])
+def add_candidate():
+    data = request.json
+    new_candidate = Candidate(
+        full_name=data['full_name'],
+        position_applied=data['position_applied'],
+        branch=data['branch'],
+        status='Scheduled',  # Default status
+        resume_url=data.get('resume_url', '')
+    )
+    db.session.add(new_candidate)
+    db.session.commit()
+    return jsonify({"message": "Candidate added!", "id": new_candidate.id}), 201
+
 # Root endpoint
 @app.route('/')
 def home():
