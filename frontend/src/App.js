@@ -1,21 +1,20 @@
-import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './Login';
-import Dashboard from './Dashboard';
-import AddCandidate from './AddCandidate';
-import CandidatePool from './CandidatePool';
-import './styles.css';
+import Dashboard from './components/Dashboard';
+import CandidateList from './components/CandidateList';
+import Sidebar from './components/Sidebar';
 
-export default function App() {
-  const [user, setUser] = useState(null);
-
+function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={user ? <Dashboard user={user} /> : <Login setUser={setUser} />} />
-        <Route path="/add" element={<AddCandidate />} />
-        <Route path="/pool" element={<CandidatePool />} />
-      </Routes>
+      <div className="flex h-screen bg-gray-100">
+        <Sidebar />
+        <div className="flex-1 p-8 overflow-auto">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/candidates" element={<CandidateList />} />
+          </Routes>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }
