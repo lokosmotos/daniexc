@@ -1,89 +1,26 @@
-from flask import Flask, request, jsonify
-from datetime import datetime, timedelta
-from messaging import (
-    send_interview_reminder,
-    send_no_show_alert,
-    send_standby_inquiry
-)
+# backend/app.py
+from flask import Flask
+from dotenv import load_dotenv
+import os
+from flask_sqlalchemy import SQLAlchemy
+
+# Load environment variables
+load_dotenv('../.env')
 
 app = Flask(__name__)
 
-# Temporary in-memory database (you can later replace with real DB)
-candidates_db = []
+# Configure PostgreSQL
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-@app.route('/candidates', methods=['POST'])
-def add_candidate():
-    data = request.json
-    if not all(k in data for k in ('name', 'email', 'phone', 'position', 'interview_time', 'branch')):
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    candidate = {
-        'name': data['name'],
-        'email': data['email'],
-        'phone': data['phone'],
-        'position': data['position'],
-        'interview_time': data['interview_time'],
-        'branch': data['branch']
-    }
-    candidates_db.append(candidate)
-
-    # Send interview reminder
-    email_sent = send_interview_reminder(candidate)
-    if not email_sent:
-        return jsonify({'error': 'Failed to send interview reminder'}), 500
-
-    return jsonify({'message': 'Candidate added and reminder sent'}), 201
-
-
-@app.route('/send-bulk-messages', methods=['POST'])
-def send_bulk_messages():
-    today = datetime.now()
-    no_show_cutoff = today - timedelta(days=1)
-
-    no_shows = []
-    standbys = []
-
-    for candidate in candidates_db:
-        interview_time = datetime.fromisoformat(candidate['interview_time'])
-        if interview_time.date() == no_show_cutoff.date():
-            no_shows.append(candidate)
-        elif candidate['position'].lower() == 'part-time':
-            standbys.append(candidate)
-
-    # Send no-show alerts
-    no_show_results = [send_no_show_alert(c) for c in no_shows]
-
-    # Send standby inquiries
-    standby_results = [send_standby_inquiry(c) for c in standbys]
-
-    return jsonify({
-        'no_shows_contacted': len([r for r in no_show_results if r]),
-        'standbys_contacted': len([r for r in standby_results if r])
-    })
-
-# backend/app.py (add to your Flask app)
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/api/hiring-calc', methods=['POST'])
-def hiring_calc():
-    data = request.get_json()
-    needed = int(data.get("needed", 0))
-    no_show_rate = float(data.get("no_show_rate", 0.33))
-    
-    suggested = int(round(needed / (1 - no_show_rate)))
-    return jsonify({
-        "needed": needed,
-        "suggested": suggested,
-        "note": f"Based on a {int(no_show_rate * 100)}% no-show rate"
-    })
-
+# Import routes (we'll create these next)
+from routes.candidates import candidates_bp
+app.register_blueprint(candidates_bp)
 
 @app.route('/')
-def index():
-    return 'Candidate Messaging API is running 🚀'
-
+def home():
+    return "Hiring App Backend Running!"
 
 if __name__ == '__main__':
     app.run(debug=True)
