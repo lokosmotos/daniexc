@@ -11,64 +11,39 @@
         <h1 class="text-3xl font-bold text-gray-800 mb-8">Hiring Dashboard</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Stats Cards -->
             <div class="bg-white p-6 rounded-lg shadow">
                 <h3 class="text-gray-500">Total Candidates</h3>
-                <p id="total-candidates" class="text-3xl font-bold">Loading...</p>
+                <p class="text-3xl font-bold">{{ stats.total }}</p>
             </div>
-            
             <div class="bg-white p-6 rounded-lg shadow">
                 <h3 class="text-gray-500">Hired</h3>
-                <p id="hired-candidates" class="text-3xl font-bold text-green-600">0</p>
+                <p class="text-3xl font-bold text-green-600">{{ stats.hired }}</p>
             </div>
-
             <div class="bg-white p-6 rounded-lg shadow">
                 <h3 class="text-gray-500">Scheduled</h3>
-                <p id="scheduled-candidates" class="text-3xl font-bold text-blue-600">0</p>
+                <p class="text-3xl font-bold text-blue-600">{{ stats.scheduled }}</p>
             </div>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Recent Candidates</h2>
-            <div id="candidates-list" class="space-y-2">
-                <!-- Will be filled by JavaScript -->
+            <h2 class="text-xl font-semibold mb-4">Candidate List</h2>
+            <div class="space-y-2">
+                {% for candidate in candidates %}
+                <div class="p-3 border-b">
+                    <h3 class="font-medium">{{ candidate.full_name }}</h3>
+                    <p class="text-sm text-gray-600">
+                        {{ candidate.position_applied }} • {{ candidate.branch }}
+                    </p>
+                    <span class="inline-block px-2 py-1 text-xs rounded 
+                        {% if candidate.status == 'Hired' %}bg-green-100 text-green-800
+                        {% elif candidate.status == 'Scheduled' %}bg-blue-100 text-blue-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ candidate.status }}
+                    </span>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
-
-    <script>
-        async function loadData() {
-            // Fetch candidates
-            const response = await fetch('/candidates');
-            const candidates = await response.json();
-            
-            // Update stats
-            document.getElementById('total-candidates').textContent = candidates.length;
-            document.getElementById('hired-candidates').textContent = 
-                candidates.filter(c => c.status === 'Hired').length;
-            document.getElementById('scheduled-candidates').textContent = 
-                candidates.filter(c => c.status === 'Scheduled').length;
-            
-            // Display candidates
-            const listElement = document.getElementById('candidates-list');
-            listElement.innerHTML = candidates.map(candidate => `
-                <div class="p-3 border-b">
-                    <h3 class="font-medium">${candidate.full_name}</h3>
-                    <p class="text-sm text-gray-600">
-                        ${candidate.position_applied} • ${candidate.branch}
-                    </p>
-                    <span class="inline-block px-2 py-1 text-xs rounded 
-                        ${candidate.status === 'Hired' ? 'bg-green-100 text-green-800' : 
-                          candidate.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' : 
-                          'bg-gray-100 text-gray-800'}">
-                        ${candidate.status}
-                    </span>
-                </div>
-            `).join('');
-        }
-        
-        // Load data when page loads
-        window.onload = loadData;
-    </script>
 </body>
 </html>
