@@ -41,10 +41,13 @@ class Candidate(db.Model):
     resume_url = db.Column(db.Text)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-# Create tables (only needed once)
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# Create tables within application context
+def initialize_database():
+    with app.app_context():
+        db.create_all()
+
+# Call the initialization function
+initialize_database()
 
 # Test database connection
 @app.route('/test_db')
@@ -78,4 +81,5 @@ def home():
     })
 
 if __name__ == '__main__':
+    initialize_database()  # Ensure tables exist before first request
     app.run(debug=True)
