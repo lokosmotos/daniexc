@@ -4,7 +4,7 @@ const Dashboard = ({ user }) => {
   const [candidates, setCandidates] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/candidates")
+    fetch("https://daniexc.onrender.com/candidates")
       .then(res => res.json())
       .then(data => setCandidates(data))
       .catch(err => console.error("Failed to fetch candidates:", err));
