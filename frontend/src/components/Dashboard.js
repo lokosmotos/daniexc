@@ -1,17 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Dashboard = ({ user }) => {
+  const [candidates, setCandidates] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/candidates")
+      .then(res => res.json())
+      .then(data => setCandidates(data))
+      .catch(err => console.error("Failed to fetch candidates:", err));
+  }, []);
+
+  const hired = candidates.filter(c => c.status === "Hired").length;
+  const scheduled = candidates.filter(c => c.status === "Interview Scheduled").length;
+
   return (
     <div className="dashboard">
       <h2>Welcome, {user.name}</h2>
-      <p>Quick Stats</p>
+
+      <div className="stats">
+        <p><strong>Total Candidates:</strong> {candidates.length}</p>
+        <p><strong>Hired:</strong> {hired}</p>
+        <p><strong>Scheduled:</strong> {scheduled}</p>
+      </div>
+
+      <h3>Candidate List</h3>
       <ul>
-        <li>5 interviews this week</li>
-        <li>2 urgent groomer openings</li>
-        <li>87 total candidates in pool</li>
+        {candidates.map((c) => (
+          <li key={c.id}>
+            {c.name} — <span>{c.status}</span>
+          </li>
+        ))}
       </ul>
-      <p>Safe Hiring Calculator</p>
-      <button>Need 3 staff</button>
     </div>
   );
 };
