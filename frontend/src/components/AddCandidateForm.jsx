@@ -1,46 +1,66 @@
-import { useState } from 'react';
-import { addCandidate } from '../services/api';
+import React, { useState } from 'react';
 
-export default function AddCandidateForm() {
-  const [form, setForm] = useState({
-    full_name: '',
-    position_applied: '',
-    branch: 'Johor'
+const AddCandidate = () => {
+  const [candidate, setCandidate] = useState({
+    name: '',
+    position: '',
+    branch: '',
+    resume: null,
   });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCandidate((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleResumeUpload = (e) => {
+    setCandidate({ ...candidate, resume: e.target.files[0] });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addCandidate(form)
-      .then(() => alert('Candidate added!'));
+    // Submit candidate data (e.g., POST request to backend)
+    console.log(candidate);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-xl font-semibold mb-4">Add New Candidate</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="add-candidate-form">
+      <h2>Add New Candidate</h2>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Full Name"
-          className="p-2 border rounded"
-          value={form.full_name}
-          onChange={(e) => setForm({...form, full_name: e.target.value})}
+          name="name"
+          value={candidate.name}
+          onChange={handleChange}
+          placeholder="Candidate Name"
           required
         />
-        <select
-          className="p-2 border rounded"
-          value={form.branch}
-          onChange={(e) => setForm({...form, branch: e.target.value})}
-        >
-          <option value="Johor">Johor</option>
-          <option value="Shah Alam">Shah Alam</option>
-        </select>
-      </div>
-      <button
-        type="submit"
-        className="mt-4 bg-primary text-white py-2 px-4 rounded hover:bg-primary-dark"
-      >
-        Save Candidate
-      </button>
-    </form>
+        <input
+          type="text"
+          name="position"
+          value={candidate.position}
+          onChange={handleChange}
+          placeholder="Position"
+          required
+        />
+        <input
+          type="text"
+          name="branch"
+          value={candidate.branch}
+          onChange={handleChange}
+          placeholder="Branch"
+          required
+        />
+        <input
+          type="file"
+          name="resume"
+          onChange={handleResumeUpload}
+          required
+        />
+        <button type="submit">Add Candidate</button>
+      </form>
+    </div>
   );
-}
+};
+
+export default AddCandidate;
