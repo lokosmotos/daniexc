@@ -1,1 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Edit Candidate</h2>
+<form method="POST" class="space-y-4">
+    <input name="name" value="{{ candidate[1] }}" class="block p-2 border">
+    <input name="position" value="{{ candidate[2] }}" class="block p-2 border">
+    <input name="experience" type="number" value="{{ candidate[3] }}" class="block p-2 border">
+    <input name="status" value="{{ candidate[4] }}" class="block p-2 border">
+    <button type="submit" class="bg-green-500 text-white px-4 py-2">Update</button>
+</form>
+{% endblock %}
 
