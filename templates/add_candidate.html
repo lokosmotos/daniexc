@@ -13,7 +13,7 @@
             --dark: #2c3e50;
             --success: #27ae60;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
@@ -22,7 +22,7 @@
             margin: 0;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -31,7 +31,7 @@
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-        
+
         h1 {
             color: var(--primary);
             text-align: center;
@@ -40,41 +40,41 @@
             border-bottom: 2px solid var(--secondary);
             padding-bottom: 10px;
         }
-        
+
         .form-section {
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .form-section h2 {
             color: var(--secondary);
             font-size: 1.2em;
             margin-bottom: 15px;
         }
-        
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
-        
+
         .form-group {
             margin-bottom: 15px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
             color: var(--primary);
         }
-        
+
         label.required:after {
             content: " *";
             color: var(--accent);
         }
-        
+
         input, select, textarea {
             width: 100%;
             padding: 10px;
@@ -83,27 +83,27 @@
             font-family: inherit;
             font-size: 14px;
         }
-        
+
         input:focus, select:focus {
             outline: none;
             border-color: var(--secondary);
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
-        
+
         .checkbox-group {
             margin-top: 10px;
         }
-        
+
         .checkbox-item {
             margin-bottom: 8px;
         }
-        
+
         .checkbox-item label {
             display: inline;
             font-weight: normal;
             margin-left: 5px;
         }
-        
+
         .btn-submit {
             background-color: var(--secondary);
             color: white;
@@ -117,20 +117,20 @@
             margin: 30px auto 0;
             transition: background-color 0.3s;
         }
-        
+
         .btn-submit:hover {
             background-color: #2980b9;
         }
-        
+
         .full-width {
             grid-column: span 2;
         }
-        
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .full-width {
                 grid-column: span 1;
             }
@@ -140,9 +140,8 @@
 <body>
     <div class="container">
         <h1>Add New Candidate</h1>
-        
         <form method="POST">
-            <!-- Personal Information Section -->
+            <!-- Personal Information -->
             <div class="form-section">
                 <h2>Personal Information</h2>
                 <div class="form-grid">
@@ -150,30 +149,26 @@
                         <label for="name" class="required">Full Name</label>
                         <input type="text" name="name" id="name" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="age" class="required">Age</label>
                         <input type="number" name="age" id="age" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="ic" class="required">IC Number</label>
                         <input type="text" name="ic" id="ic" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="phone_number" class="required">Phone Number</label>
                         <input type="text" name="phone_number" id="phone_number" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="email" class="required">Email</label>
                         <input type="email" name="email" id="email" required>
                     </div>
                 </div>
             </div>
-            
-            <!-- Application Details Section -->
+
+            <!-- Application Details -->
             <div class="form-section">
                 <h2>Application Details</h2>
                 <div class="form-grid">
@@ -193,7 +188,6 @@
                             <option value="S2">S2 - Seremban 2</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="position" class="required">Position</label>
                         <select name="position" id="position" required>
@@ -206,7 +200,6 @@
                             <option value="HR">HR</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="status" class="required">Status</label>
                         <select name="status" id="status" required>
@@ -218,12 +211,10 @@
                             <option value="Waiting List">Waiting List</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="status_reason">Status Reason (if applicable)</label>
                         <input type="text" name="status_reason" id="status_reason">
                     </div>
-                    
                     <div class="form-group">
                         <label for="hostel_required">Hostel Required?</label>
                         <select name="hostel_required" id="hostel_required">
@@ -233,8 +224,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Dates Section -->
+
+            <!-- Dates -->
             <div class="form-section">
                 <h2>Important Dates</h2>
                 <div class="form-grid">
@@ -242,15 +233,14 @@
                         <label for="date_iv">Interview Date</label>
                         <input type="date" name="date_iv" id="date_iv">
                     </div>
-                    
                     <div class="form-group">
                         <label for="date_training">Training Date</label>
                         <input type="date" name="date_training" id="date_training">
                     </div>
                 </div>
             </div>
-            
-            <!-- Documents Section -->
+
+            <!-- Documents -->
             <div class="form-section">
                 <h2>Documents</h2>
                 <div class="form-grid">
@@ -258,23 +248,19 @@
                         <label for="resume_url">Resume URL</label>
                         <input type="text" name="resume_url" id="resume_url" placeholder="https://...">
                     </div>
-                    
                     <div class="form-group">
                         <label for="offer_letter">Offer Letter Reference</label>
                         <input type="text" name="offer_letter" id="offer_letter">
                     </div>
-                    
                     <div class="form-group">
                         <label for="candidate_form">Candidate Form Reference</label>
                         <input type="text" name="candidate_form" id="candidate_form">
                     </div>
-                    
                     <div class="form-group">
                         <label for="nda">NDA Reference</label>
                         <input type="text" name="nda" id="nda">
                     </div>
                 </div>
-                
                 <div class="form-group full-width">
                     <label>Documents Received (Tick all that apply)</label>
                     <div class="checkbox-group">
@@ -294,15 +280,12 @@
                             <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
                             <label for="doc_candidate_form">Candidate Form</label>
                         </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" name="doc_ic" id="doc_ic">
-                            <label for="doc_ic">IC Copy</label>
-                        </div>
                     </div>
                 </div>
             </div>
-            
-            <button type="submit" class="btn-submit">Save Candidate</button>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">Add Candidate</button>
         </form>
     </div>
 </body>
