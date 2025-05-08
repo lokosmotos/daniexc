@@ -1,1 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Candidates Pool</h2>
+<table class="w-full bg-white shadow-md">
+    <thead>
+        <tr>
+            <th class="p-2">Name</th>
+            <th class="p-2">Position</th>
+            <th class="p-2">Experience</th>
+            <th class="p-2">Status</th>
+            <th class="p-2">Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in candidates %}
+        <tr>
+            <td class="p-2">{{ c[1] }}</td>
+            <td class="p-2">{{ c[2] }}</td>
+            <td class="p-2">{{ c[3] }}</td>
+            <td class="p-2">{{ c[4] }}</td>
+            <td class="p-2"><a href="/edit/{{ c[0] }}" class="text-blue-500 underline">Edit</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
 
