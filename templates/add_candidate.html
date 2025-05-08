@@ -1,62 +1,144 @@
-<!-- add_candidate.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Candidate</title>
+    <title>Add New Candidate - Purr-fect Hire</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #fff4f4;
+            color: #5a3e36;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-image: url('https://img.freepik.com/free-vector/paw-seamless-pattern-background_42349-726.jpg');
+            background-size: 200px;
+            background-opacity: 0.1;
+        }
+        h1 {
+            color: #ff85a2;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 133, 162, 0.3);
+            border: 3px dashed #ffb6c1;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #ff85a2;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffb6c1;
+            border-radius: 10px;
+            background-color: #fff9f9;
+            font-family: inherit;
+        }
+        button {
+            background-color: #ff85a2;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin-top: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #ff6b8b;
+            transform: scale(1.02);
+        }
+        .cat-paw {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        .required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add a New Candidate</h1>
-    <form method="POST">
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required><br>
-
-        <label for="age">Age:</label>
-        <input type="number" name="age" id="age" required><br>
-
-        <label for="position">Position:</label>
-        <input type="text" name="position" id="position" required><br>
-
-        <label for="branch">Branch:</label>
-        <select name="branch" id="branch" required>
-            <option value="PUJ">PUJ</option>
-            <option value="Bangi">Bangi</option>
-            <option value="DP">Damansara Perdana</option>
-            <!-- Add more branches as necessary -->
-        </select><br>
-
-        <label for="phone_number">Phone Number:</label>
-        <input type="text" name="phone_number" id="phone_number" required><br>
-
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required><br>
-
-        <label for="resume_url">Resume URL:</label>
-        <input type="text" name="resume_url" id="resume_url"><br>
-
-        <label for="status">Status:</label>
-        <input type="text" name="status" id="status" required><br>
-
-        <label for="date_iv">Interview Date:</label>
-        <input type="date" name="date_iv" id="date_iv"><br>
-
-        <label for="date_training">Training Date:</label>
-        <input type="date" name="date_training" id="date_training"><br>
-
-        <label for="offer_letter">Offer Letter:</label>
-        <input type="text" name="offer_letter" id="offer_letter"><br>
-
-        <label for="ic">IC:</label>
-        <input type="text" name="ic" id="ic"><br>
-
-        <label for="candidate_form">Candidate Form:</label>
-        <input type="text" name="candidate_form" id="candidate_form"><br>
-
-        <label for="nda">NDA:</label>
-        <input type="text" name="nda" id="nda"><br>
-
-        <button type="submit">Add Candidate</button>
-    </form>
+    <h1>
+        <span class="cat-paw">🐾</span>
+        Add a New Candidate
+        <span class="cat-paw">🐾</span>
+    </h1>
+    
+    <div class="form-container">
+        <form method="POST">
+            <label for="name" class="required">Name:</label>
+            <input type="text" name="name" id="name" placeholder="Whiskers McFluffy" required>
+            
+            <label for="age" class="required">Age:</label>
+            <input type="number" name="age" id="age" placeholder="e.g. 28" required>
+            
+            <label for="position" class="required">Position:</label>
+            <input type="text" name="position" id="position" placeholder="Chief Mouse Catcher" required>
+            
+            <label for="branch" class="required">Branch:</label>
+            <select name="branch" id="branch" required>
+                <option value="">-- Select a branch --</option>
+                <option value="PUJ">PUJ - Sri Kembangan</option>
+                <option value="S2">S2 - Seremban 2</option>
+                <option value="BG">BG - Bangi</option>
+                <option value="DP">DP - Damansara Perdana</option>
+                <option value="IP">IP - Ipoh</option>
+                <option value="JB">JB - Johor Bharu</option>
+                <option value="SA">SA - Shah Alam</option>
+                <option value="USJ">USJ - USJ</option>
+                <option value="WM">WM - Wangsa Maju</option>
+            </select>
+            
+            <label for="phone_number" class="required">Phone Number:</label>
+            <input type="text" name="phone_number" id="phone_number" placeholder="e.g. 012-3456789" required>
+            
+            <label for="email" class="required">Email:</label>
+            <input type="email" name="email" id="email" placeholder="purr@example.com" required>
+            
+            <label for="resume_url">Resume URL:</label>
+            <input type="text" name="resume_url" id="resume_url" placeholder="https://linkedin.com/in/cat-profile">
+            
+            <label for="status" class="required">Status:</label>
+            <input type="text" name="status" id="status" placeholder="e.g. Interview Scheduled" required>
+            
+            <label for="date_iv">Interview Date:</label>
+            <input type="date" name="date_iv" id="date_iv">
+            
+            <label for="date_training">Training Date:</label>
+            <input type="date" name="date_training" id="date_training">
+            
+            <label for="offer_letter">Offer Letter:</label>
+            <input type="text" name="offer_letter" id="offer_letter" placeholder="URL or reference number">
+            
+            <label for="ic">IC Number:</label>
+            <input type="text" name="ic" id="ic" placeholder="e.g. 901234-56-7890">
+            
+            <label for="candidate_form">Candidate Form:</label>
+            <input type="text" name="candidate_form" id="candidate_form" placeholder="URL or reference number">
+            
+            <label for="nda">NDA:</label>
+            <input type="text" name="nda" id="nda" placeholder="URL or reference number">
+            
+            <button type="submit">
+                <span class="cat-paw">🐱</span> Add Candidate <span class="cat-paw">🐱</span>
+            </button>
+        </form>
+    </div>
 </body>
 </html>
