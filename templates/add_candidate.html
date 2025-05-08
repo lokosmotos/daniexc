@@ -1,12 +1,62 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2 class="text-xl font-semibold mb-4">Add New Candidate</h2>
-<form method="POST" class="space-y-4">
-    <input name="name" placeholder="Name" class="block p-2 border" required>
-    <input name="position" placeholder="Position" class="block p-2 border" required>
-    <input name="experience" type="number" placeholder="Experience (years)" class="block p-2 border" required>
-    <input name="status" placeholder="Status (e.g., Pending, Hired)" class="block p-2 border" required>
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2">Add</button>
-</form>
-{% endblock %}
+<!-- add_candidate.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Candidate</title>
+</head>
+<body>
+    <h1>Add a New Candidate</h1>
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br>
 
+        <label for="age">Age:</label>
+        <input type="number" name="age" id="age" required><br>
+
+        <label for="position">Position:</label>
+        <input type="text" name="position" id="position" required><br>
+
+        <label for="branch">Branch:</label>
+        <select name="branch" id="branch" required>
+            <option value="PUJ">PUJ</option>
+            <option value="Bangi">Bangi</option>
+            <option value="DP">Damansara Perdana</option>
+            <!-- Add more branches as necessary -->
+        </select><br>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="phone_number" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br>
+
+        <label for="resume_url">Resume URL:</label>
+        <input type="text" name="resume_url" id="resume_url"><br>
+
+        <label for="status">Status:</label>
+        <input type="text" name="status" id="status" required><br>
+
+        <label for="date_iv">Interview Date:</label>
+        <input type="date" name="date_iv" id="date_iv"><br>
+
+        <label for="date_training">Training Date:</label>
+        <input type="date" name="date_training" id="date_training"><br>
+
+        <label for="offer_letter">Offer Letter:</label>
+        <input type="text" name="offer_letter" id="offer_letter"><br>
+
+        <label for="ic">IC:</label>
+        <input type="text" name="ic" id="ic"><br>
+
+        <label for="candidate_form">Candidate Form:</label>
+        <input type="text" name="candidate_form" id="candidate_form"><br>
+
+        <label for="nda">NDA:</label>
+        <input type="text" name="nda" id="nda"><br>
+
+        <button type="submit">Add Candidate</button>
+    </form>
+</body>
+</html>
