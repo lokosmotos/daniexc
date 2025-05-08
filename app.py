@@ -1,71 +1,42 @@
-from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
+from flask import Flask, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hr_system.db'
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
-# Initialize DB
-def init_db():
-    conn = sqlite3.connect('candidates.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS candidates
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  name TEXT,
-                  position TEXT,
-                  experience INTEGER,
-                  status TEXT)''')
-    conn.commit()
-    conn.close()
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
 
-@app.route('/add', methods=['GET', 'POST'])
-def add_candidate():
-    if request.method == 'POST':
-        name = request.form['name']
-        position = request.form['position']
-        experience = request.form['experience']
-        status = request.form['status']
-        conn = sqlite3.connect('candidates.db')
-        c = conn.cursor()
-        c.execute("INSERT INTO candidates (name, position, experience, status) VALUES (?, ?, ?, ?)",
-                  (name, position, experience, status))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('candidate_pool'))
-    return render_template('add_candidate.html')
 
-@app.route('/pool')
-def candidate_pool():
-    conn = sqlite3.connect('candidates.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM candidates")
-    candidates = c.fetchall()
-    conn.close()
-    return render_template('candidate_pool.html', candidates=candidates)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-@app.route('/edit/<int:candidate_id>', methods=['GET', 'POST'])
-def edit_candidate(candidate_id):
-    conn = sqlite3.connect('candidates.db')
-    c = conn.cursor()
-    if request.method == 'POST':
-        name = request.form['name']
-        position = request.form['position']
-        experience = request.form['experience']
-        status = request.form['status']
-        c.execute("UPDATE candidates SET name=?, position=?, experience=?, status=? WHERE id=?",
-                  (name, position, experience, status, candidate_id))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('candidate_pool'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Logic to handle login
+    pass
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # Show dashboard only for HR
+    if current_user.role == 'HR':
+        return render_template('dashboard.html')
     else:
-        c.execute("SELECT * FROM candidates WHERE id=?", (candidate_id,))
-        candidate = c.fetchone()
-        conn.close()
-        return render_template('edit_candidate.html', candidate=candidate)
+        return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
-
