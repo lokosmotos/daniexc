@@ -3,141 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Candidate - Purr-fect Hire</title>
+    <title>Add New Candidate | Talent Management System</title>
     <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+        }
+        
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #fff4f4;
-            color: #5a3e36;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            margin: 0;
             padding: 20px;
-            background-image: url('https://img.freepik.com/free-vector/paw-seamless-pattern-background_42349-726.jpg');
-            background-size: 200px;
-            background-opacity: 0.1;
         }
-        h1 {
-            color: #ff85a2;
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        .form-container {
-            background-color: white;
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(255, 133, 162, 0.3);
-            border: 3px dashed #ffb6c1;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-section h2 {
+            color: var(--secondary);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
         label {
             display: block;
-            margin: 15px 0 5px;
-            font-weight: bold;
-            color: #ff85a2;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--primary);
         }
-        input, select {
+        
+        label.required:after {
+            content: " *";
+            color: var(--accent);
+        }
+        
+        input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 2px solid #ffb6c1;
-            border-radius: 10px;
-            background-color: #fff9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-family: inherit;
+            font-size: 14px;
         }
-        button {
-            background-color: #ff85a2;
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .checkbox-group {
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            margin-bottom: 8px;
+        }
+        
+        .checkbox-item label {
+            display: inline;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        
+        .btn-submit {
+            background-color: var(--secondary);
             color: white;
             border: none;
             padding: 12px 25px;
-            margin-top: 20px;
-            border-radius: 50px;
+            font-size: 16px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
             display: block;
-            width: 100%;
-            transition: all 0.3s;
+            width: 200px;
+            margin: 30px auto 0;
+            transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #ff6b8b;
-            transform: scale(1.02);
+        
+        .btn-submit:hover {
+            background-color: #2980b9;
         }
-        .cat-paw {
-            font-size: 1.5em;
-            vertical-align: middle;
-            margin: 0 5px;
+        
+        .full-width {
+            grid-column: span 2;
         }
-        .required:after {
-            content: " *";
-            color: red;
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>
-        <span class="cat-paw">🐾</span>
-        Add a New Candidate
-        <span class="cat-paw">🐾</span>
-    </h1>
-    
-    <div class="form-container">
+    <div class="container">
+        <h1>Add New Candidate</h1>
+        
         <form method="POST">
-            <label for="name" class="required">Name:</label>
-            <input type="text" name="name" id="name" placeholder="Whiskers McFluffy" required>
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h2>Personal Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name" class="required">Full Name</label>
+                        <input type="text" name="name" id="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age" class="required">Age</label>
+                        <input type="number" name="age" id="age" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ic" class="required">IC Number</label>
+                        <input type="text" name="ic" id="ic" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone_number" class="required">Phone Number</label>
+                        <input type="text" name="phone_number" id="phone_number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">Email</label>
+                        <input type="email" name="email" id="email" required>
+                    </div>
+                </div>
+            </div>
             
-            <label for="age" class="required">Age:</label>
-            <input type="number" name="age" id="age" placeholder="e.g. 28" required>
+            <!-- Application Details Section -->
+            <div class="form-section">
+                <h2>Application Details</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="branch" class="required">Branch</label>
+                        <select name="branch" id="branch" required>
+                            <option value="">-- Select Branch --</option>
+                            <option value="PUJ">PUJ - Sri Kembangan</option>
+                            <option value="Bangi">Bangi</option>
+                            <option value="DP">DP - Damansara Perdana</option>
+                            <option value="WM">WM - Wangsa Maju</option>
+                            <option value="SA">SA - Shah Alam</option>
+                            <option value="USJ">USJ</option>
+                            <option value="Cheng">Cheng</option>
+                            <option value="IP">IP - Ipoh</option>
+                            <option value="JB">JB - Johor Bharu</option>
+                            <option value="S2">S2 - Seremban 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="position" class="required">Position</label>
+                        <select name="position" id="position" required>
+                            <option value="">-- Select Position --</option>
+                            <option value="Pet Care Consultant & Sales">Pet Care Consultant & Sales</option>
+                            <option value="Branch Manager">Branch Manager</option>
+                            <option value="Intern - Full Stack">Intern - Full Stack</option>
+                            <option value="Intern - Admin">Intern - Admin</option>
+                            <option value="Intern - HR">Intern - HR</option>
+                            <option value="HR">HR</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status" class="required">Status</label>
+                        <select name="status" id="status" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="MIA">MIA</option>
+                            <option value="KIV">KIV (Keep In View)</option>
+                            <option value="Withdraw">Withdraw</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Waiting List">Waiting List</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status_reason">Status Reason (if applicable)</label>
+                        <input type="text" name="status_reason" id="status_reason">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hostel_required">Hostel Required?</label>
+                        <select name="hostel_required" id="hostel_required">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             
-            <label for="position" class="required">Position:</label>
-            <input type="text" name="position" id="position" placeholder="Chief Mouse Catcher" required>
+            <!-- Dates Section -->
+            <div class="form-section">
+                <h2>Important Dates</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="date_iv">Interview Date</label>
+                        <input type="date" name="date_iv" id="date_iv">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date_training">Training Date</label>
+                        <input type="date" name="date_training" id="date_training">
+                    </div>
+                </div>
+            </div>
             
-            <label for="branch" class="required">Branch:</label>
-            <select name="branch" id="branch" required>
-                <option value="">-- Select a branch --</option>
-                <option value="PUJ">PUJ - Sri Kembangan</option>
-                <option value="S2">S2 - Seremban 2</option>
-                <option value="BG">BG - Bangi</option>
-                <option value="DP">DP - Damansara Perdana</option>
-                <option value="IP">IP - Ipoh</option>
-                <option value="JB">JB - Johor Bharu</option>
-                <option value="SA">SA - Shah Alam</option>
-                <option value="USJ">USJ - USJ</option>
-                <option value="WM">WM - Wangsa Maju</option>
-            </select>
+            <!-- Documents Section -->
+            <div class="form-section">
+                <h2>Documents</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="resume_url">Resume URL</label>
+                        <input type="text" name="resume_url" id="resume_url" placeholder="https://...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="offer_letter">Offer Letter Reference</label>
+                        <input type="text" name="offer_letter" id="offer_letter">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="candidate_form">Candidate Form Reference</label>
+                        <input type="text" name="candidate_form" id="candidate_form">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nda">NDA Reference</label>
+                        <input type="text" name="nda" id="nda">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Documents Received (Tick all that apply)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="doc_nda" id="doc_nda">
+                            <label for="doc_nda">NDA</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
+                            <label for="doc_offer_letter">Offer Letter</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="doc_resume" id="doc_resume">
+                            <label for="doc_resume">Resume</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
+                            <label for="doc_candidate_form">Candidate Form</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="doc_ic" id="doc_ic">
+                            <label for="doc_ic">IC Copy</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            <label for="phone_number" class="required">Phone Number:</label>
-            <input type="text" name="phone_number" id="phone_number" placeholder="e.g. 012-3456789" required>
-            
-            <label for="email" class="required">Email:</label>
-            <input type="email" name="email" id="email" placeholder="purr@example.com" required>
-            
-            <label for="resume_url">Resume URL:</label>
-            <input type="text" name="resume_url" id="resume_url" placeholder="https://linkedin.com/in/cat-profile">
-            
-            <label for="status" class="required">Status:</label>
-            <input type="text" name="status" id="status" placeholder="e.g. Interview Scheduled" required>
-            
-            <label for="date_iv">Interview Date:</label>
-            <input type="date" name="date_iv" id="date_iv">
-            
-            <label for="date_training">Training Date:</label>
-            <input type="date" name="date_training" id="date_training">
-            
-            <label for="offer_letter">Offer Letter:</label>
-            <input type="text" name="offer_letter" id="offer_letter" placeholder="URL or reference number">
-            
-            <label for="ic">IC Number:</label>
-            <input type="text" name="ic" id="ic" placeholder="e.g. 901234-56-7890">
-            
-            <label for="candidate_form">Candidate Form:</label>
-            <input type="text" name="candidate_form" id="candidate_form" placeholder="URL or reference number">
-            
-            <label for="nda">NDA:</label>
-            <input type="text" name="nda" id="nda" placeholder="URL or reference number">
-            
-            <button type="submit">
-                <span class="cat-paw">🐱</span> Add Candidate <span class="cat-paw">🐱</span>
-            </button>
+            <button type="submit" class="btn-submit">Save Candidate</button>
         </form>
     </div>
 </body>
