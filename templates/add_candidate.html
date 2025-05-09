@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Candidate | Talent Management System</title>
+    <title>Add New Groomer Candidate | Purrfect Paws</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #4f46e5;
+            --primary: #6d28d9;
+            --primary-dark: #5b21b6;
+            --secondary: #7c3aed;
             --accent: #ef4444;
             --light: #f8fafc;
             --dark: #1e293b;
@@ -17,15 +17,18 @@
             --warning: #f59e0b;
             --gray: #94a3b8;
             --light-gray: #e2e8f0;
+            --cat-pink: #f9a8d4;
         }
         
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f5f3ff;
             color: var(--dark);
             line-height: 1.6;
             margin: 0;
             padding: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M30,40 Q35,25 45,30 Q55,20 65,30 Q70,15 80,25 L75,50 Q85,55 80,65 Q90,70 75,75 Q80,85 65,80 Q60,90 50,85 Q40,90 35,80 Q20,75 25,65 Q15,60 20,50 Q10,40 30,40" fill="none" stroke="%23ddd6fe" stroke-width="2"/></svg>');
+            background-size: 150px;
         }
         
         .container {
@@ -35,6 +38,22 @@
             padding: 2.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-top: 5px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236d28d9" opacity="0.1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: translate(30%, -30%);
         }
         
         h1 {
@@ -45,24 +64,42 @@
             font-size: 1.8rem;
             position: relative;
             padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1:before, h1:after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--light-gray));
+            margin: 0 1rem;
         }
         
         h1:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
+            background: linear-gradient(270deg, transparent, var(--light-gray));
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .logo svg {
+            margin-right: 0.5rem;
+            width: 28px;
+            height: 28px;
         }
         
         .form-section {
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
+            border-bottom: 1px dashed var(--light-gray);
         }
         
         .form-section h2 {
@@ -122,7 +159,7 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
         }
         
         input[type="file"] {
@@ -147,6 +184,18 @@
         .gender-female {
             background-color: #fce7f3;
             color: #be185d;
+        }
+        
+        .age-display {
+            position: absolute;
+            right: 1rem;
+            top: 2.2rem;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            background-color: #e0f2fe;
+            color: #0369a1;
         }
         
         .checkbox-group {
@@ -183,12 +232,14 @@
             display: block;
             width: auto;
             margin: 2rem auto 0;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         
         .btn-submit:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
         .error {
@@ -211,6 +262,10 @@
             font-style: italic;
         }
         
+        .hidden {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
@@ -219,6 +274,10 @@
             
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            h1:before, h1:after {
+                display: none;
             }
         }
         
@@ -231,7 +290,7 @@
             background-size: 1em;
         }
         
-        /* Custom checkbox */
+        /* Cat-themed checkbox */
         input[type="checkbox"] {
             appearance: none;
             width: 18px;
@@ -250,19 +309,38 @@
         input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
-            left: 6px;
-            top: 2px;
+            left: 5px;
+            top: 1px;
             width: 5px;
             height: 10px;
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
+        
+        /* Cat paw print for required fields */
+        label.required:before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ef4444"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-3H9V8h2v5z"/></svg>');
+            background-size: contain;
+            margin-right: 0.3rem;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Add New Candidate</h1>
+        <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+            Purrfect Paws Grooming
+        </div>
+        
+        <h1>New Groomer Application</h1>
         
         <form id="candidateForm" method="POST" enctype="multipart/form-data">
             <!-- Personal Information Section -->
@@ -282,14 +360,15 @@
                     
                     <div class="form-group">
                         <label for="age" class="required">Age</label>
-                        <input type="number" name="age" id="age" required min="18" max="70" placeholder="18-70">
+                        <input type="number" name="age" id="age" required min="18" max="70" placeholder="18-70" readonly>
+                        <span id="ageDisplay" class="age-display">Age will auto-calculate</span>
                         <span id="ageError" class="error">Age must be between 18-70 years</span>
                     </div>
                     
                     <div class="form-group">
                         <label for="ic" class="required">IC Number</label>
                         <input type="text" name="ic" id="ic" required placeholder="e.g. 891103105887" 
-                               pattern="\d{12}" maxlength="12" oninput="detectGender(this.value)">
+                               pattern="\d{12}" maxlength="12" oninput="processICNumber(this.value)">
                         <span id="genderDisplay" class="gender-indicator" style="display:none;"></span>
                         <span id="icError" class="error">Please enter a valid 12-digit IC number</span>
                         <div class="form-note">Format: YYMMDD-BP-###G (12 digits)</div>
@@ -307,6 +386,11 @@
                         <input type="email" name="email" id="email" required placeholder="e.g. ahmad@example.com">
                         <span id="emailError" class="error">Please enter a valid email address</span>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Cat Grooming Experience (years)</label>
+                        <input type="number" name="experience" id="experience" min="0" max="50" placeholder="e.g. 3">
+                    </div>
                 </div>
             </div>
             
@@ -321,7 +405,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="branch" class="required">Branch</label>
-                        <select name="branch" id="branch" required>
+                        <select name="branch" id="branch" required onchange="toggleHostelField()">
                             <option value="">-- Select Branch --</option>
                             <option value="PUJ">PUJ - Sri Kembangan</option>
                             <option value="Bangi">Bangi</option>
@@ -340,12 +424,12 @@
                         <label for="position" class="required">Position</label>
                         <select name="position" id="position" required>
                             <option value="">-- Select Position --</option>
-                            <option value="Pet Care Consultant & Sales">Pet Care Consultant & Sales</option>
-                            <option value="Branch Manager">Branch Manager</option>
-                            <option value="Intern - Full Stack">Intern - Full Stack</option>
-                            <option value="Intern - Admin">Intern - Admin</option>
-                            <option value="Intern - HR">Intern - HR</option>
-                            <option value="HR">HR</option>
+                            <option value="Cat Groomer">Cat Groomer</option>
+                            <option value="Senior Cat Groomer">Senior Cat Groomer</option>
+                            <option value="Grooming Manager">Grooming Manager</option>
+                            <option value="Grooming Assistant">Grooming Assistant</option>
+                            <option value="Trainee Groomer">Trainee Groomer</option>
+                            <option value="Receptionist">Receptionist</option>
                         </select>
                     </div>
                     
@@ -353,27 +437,37 @@
                         <label for="status" class="required">Status</label>
                         <select name="status" id="status" required>
                             <option value="">-- Select Status --</option>
-                            <option value="MIA">MIA</option>
-                            <option value="KIV">KIV (Keep In View)</option>
-                            <option value="Withdraw">Withdraw</option>
-                            <option value="Rejected">Rejected</option>
-                            <option value="Waiting List">Waiting List</option>
+                            <option value="New Application">New Application</option>
                             <option value="Interview Scheduled">Interview Scheduled</option>
+                            <option value="Practical Test Scheduled">Practical Test Scheduled</option>
                             <option value="Offer Sent">Offer Sent</option>
                             <option value="Hired">Hired</option>
+                            <option value="KIV">KIV (Keep In View)</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label for="status_reason">Status Reason (if applicable)</label>
-                        <input type="text" name="status_reason" id="status_reason" placeholder="e.g. Not qualified">
+                        <input type="text" name="status_reason" id="status_reason" placeholder="e.g. Needs more training">
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group hidden" id="hostel-group">
                         <label for="hostel_required">Hostel Required?</label>
                         <select name="hostel_required" id="hostel_required">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="availability">Availability</label>
+                        <select name="availability" id="availability">
+                            <option value="">-- Select Availability --</option>
+                            <option value="Immediate">Immediate</option>
+                            <option value="1 Month Notice">1 Month Notice</option>
+                            <option value="2 Months Notice">2 Months Notice</option>
+                            <option value="Flexible">Flexible</option>
                         </select>
                     </div>
                 </div>
@@ -394,8 +488,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="date_training">Training Date</label>
-                        <input type="date" name="date_training" id="date_training">
+                        <label for="date_practical">Practical Test Date</label>
+                        <input type="date" name="date_practical" id="date_practical">
                     </div>
                     
                     <div class="form-group">
@@ -428,20 +522,15 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="certificates">Certificates (if any)</label>
+                        <label for="certificates">Grooming Certificates (if any)</label>
                         <input type="file" name="certificates" id="certificates" accept=".pdf,.jpg,.jpeg,.png" multiple>
                         <div class="file-info">You can select multiple files</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Terms and Conditions -->
-            <div class="form-section">
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" name="agree" id="agree" required>
-                        <label for="agree" class="required">I confirm that all information provided is accurate</label>
-                        <span id="agreeError" class="error">You must confirm the information</span>
+                    
+                    <div class="form-group">
+                        <label for="portfolio">Grooming Portfolio (Photos)</label>
+                        <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple>
+                        <div class="file-info">Show us your best work</div>
                     </div>
                 </div>
             </div>
@@ -458,84 +547,109 @@
     </div>
 
     <script>
-        // Detect gender from IC number (last digit)
-        function detectGender(icNumber) {
+        // Process IC number to detect gender and calculate age
+        function processICNumber(icNumber) {
             const genderDisplay = document.getElementById('genderDisplay');
+            const ageInput = document.getElementById('age');
+            const ageDisplay = document.getElementById('ageDisplay');
             
-            if (icNumber.length === 12) {
+            if (icNumber.length === 12 && /^\d+$/.test(icNumber)) {
+                // Detect gender from last digit (odd = male, even = female)
                 const lastDigit = parseInt(icNumber.slice(-1));
                 const isMale = lastDigit % 2 !== 0;
                 
                 genderDisplay.style.display = 'block';
                 genderDisplay.textContent = isMale ? 'Male' : 'Female';
                 genderDisplay.className = isMale ? 'gender-indicator gender-male' : 'gender-indicator gender-female';
+                
+                // Calculate age from birth date (first 6 digits: YYMMDD)
+                const birthYear = parseInt(icNumber.substring(0, 2));
+                const birthMonth = parseInt(icNumber.substring(2, 4)) - 1; // Months are 0-indexed
+                const birthDay = parseInt(icNumber.substring(4, 6));
+                
+                // Handle year (00-21 is 2000-2021, 22-99 is 1922-1999)
+                const currentYear = new Date().getFullYear();
+                const fullBirthYear = birthYear <= (currentYear % 100) ? 2000 + birthYear : 1900 + birthYear;
+                
+                const birthDate = new Date(fullBirthYear, birthMonth, birthDay);
+                const today = new Date();
+                
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                
+                // Update age field
+                ageInput.value = age;
+                ageDisplay.textContent = age + ' years old';
+                ageDisplay.style.display = 'block';
+                
+                // Validate age
+                if (age < 18 || age > 70) {
+                    document.getElementById('ageError').style.display = 'block';
+                } else {
+                    document.getElementById('ageError').style.display = 'none';
+                }
             } else {
                 genderDisplay.style.display = 'none';
+                ageDisplay.textContent = 'Age will auto-calculate';
+                ageInput.value = '';
             }
         }
-
+        
+        // Toggle hostel field based on branch selection
+        function toggleHostelField() {
+            const branch = document.getElementById('branch').value;
+            const hostelGroup = document.getElementById('hostel-group');
+            
+            // Only show hostel for Damansara (DP), Bangi, and Wangsa Maju (WM)
+            if (['DP', 'Bangi', 'WM'].includes(branch)) {
+                hostelGroup.classList.remove('hidden');
+            } else {
+                hostelGroup.classList.add('hidden');
+                document.getElementById('hostel_required').value = 'No';
+            }
+        }
+        
         // Form validation
         const form = document.getElementById('candidateForm');
-        const name = document.getElementById('name');
-        const age = document.getElementById('age');
-        const ic = document.getElementById('ic');
-        const phoneNumber = document.getElementById('phone_number');
-        const email = document.getElementById('email');
-        const resume = document.getElementById('resume');
-        const agree = document.getElementById('agree');
-        const nameError = document.getElementById('nameError');
-        const ageError = document.getElementById('ageError');
-        const icError = document.getElementById('icError');
-        const phoneNumberError = document.getElementById('phoneNumberError');
-        const emailError = document.getElementById('emailError');
-        const resumeError = document.getElementById('resumeError');
-        const agreeError = document.getElementById('agreeError');
         
         function validateForm(event) {
             let isValid = true;
             
             // Reset errors
-            nameError.style.display = 'none';
-            ageError.style.display = 'none';
-            icError.style.display = 'none';
-            phoneNumberError.style.display = 'none';
-            emailError.style.display = 'none';
-            resumeError.style.display = 'none';
-            agreeError.style.display = 'none';
+            document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
             
             // Name validation
-            if (name.value.trim() === '') {
-                nameError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // Age validation
-            if (age.value < 18 || age.value > 70) {
-                ageError.style.display = 'block';
+            if (document.getElementById('name').value.trim() === '') {
+                document.getElementById('nameError').style.display = 'block';
                 isValid = false;
             }
             
             // IC validation
-            if (!/^\d{12}$/.test(ic.value)) {
-                icError.style.display = 'block';
+            if (!/^\d{12}$/.test(document.getElementById('ic').value)) {
+                document.getElementById('icError').style.display = 'block';
                 isValid = false;
             }
             
             // Phone Number validation
-            if (!/^\d{10,11}$/.test(phoneNumber.value)) {
-                phoneNumberError.style.display = 'block';
+            if (!/^\d{10,11}$/.test(document.getElementById('phone_number').value)) {
+                document.getElementById('phoneNumberError').style.display = 'block';
                 isValid = false;
             }
             
             // Email validation
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-                emailError.style.display = 'block';
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value)) {
+                document.getElementById('emailError').style.display = 'block';
                 isValid = false;
             }
 
             // Resume validation
+            const resume = document.getElementById('resume');
             if (!resume.files.length) {
-                resumeError.style.display = 'block';
+                document.getElementById('resumeError').style.display = 'block';
                 isValid = false;
             } else {
                 const file = resume.files[0];
@@ -543,19 +657,20 @@
                 const maxSize = 5 * 1024 * 1024; // 5MB
                 
                 if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx)$/i)) {
-                    resumeError.textContent = 'Please upload a PDF, DOC or DOCX file';
-                    resumeError.style.display = 'block';
+                    document.getElementById('resumeError').textContent = 'Please upload a PDF, DOC or DOCX file';
+                    document.getElementById('resumeError').style.display = 'block';
                     isValid = false;
                 } else if (file.size > maxSize) {
-                    resumeError.textContent = 'File size exceeds 5MB limit';
-                    resumeError.style.display = 'block';
+                    document.getElementById('resumeError').textContent = 'File size exceeds 5MB limit';
+                    document.getElementById('resumeError').style.display = 'block';
                     isValid = false;
                 }
             }
             
-            // Terms and conditions validation
-            if (!agree.checked) {
-                agreeError.style.display = 'block';
+            // Age validation (from IC)
+            const age = parseInt(document.getElementById('age').value);
+            if (age < 18 || age > 70) {
+                document.getElementById('ageError').style.display = 'block';
                 isValid = false;
             }
 
@@ -572,32 +687,24 @@
         form.addEventListener('submit', validateForm);
 
         // Real-time validation
-        name.addEventListener('input', () => {
-            if (name.value.trim() !== '') nameError.style.display = 'none';
+        document.getElementById('name').addEventListener('input', function() {
+            if (this.value.trim() !== '') document.getElementById('nameError').style.display = 'none';
         });
         
-        age.addEventListener('input', () => {
-            if (age.value >= 18 && age.value <= 70) ageError.style.display = 'none';
+        document.getElementById('ic').addEventListener('input', function() {
+            if (/^\d{12}$/.test(this.value)) document.getElementById('icError').style.display = 'none';
         });
         
-        ic.addEventListener('input', () => {
-            if (/^\d{12}$/.test(ic.value)) icError.style.display = 'none';
+        document.getElementById('phone_number').addEventListener('input', function() {
+            if (/^\d{10,11}$/.test(this.value)) document.getElementById('phoneNumberError').style.display = 'none';
         });
         
-        phoneNumber.addEventListener('input', () => {
-            if (/^\d{10,11}$/.test(phoneNumber.value)) phoneNumberError.style.display = 'none';
+        document.getElementById('email').addEventListener('input', function() {
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)) document.getElementById('emailError').style.display = 'none';
         });
         
-        email.addEventListener('input', () => {
-            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) emailError.style.display = 'none';
-        });
-        
-        resume.addEventListener('change', () => {
-            if (resume.files.length) resumeError.style.display = 'none';
-        });
-        
-        agree.addEventListener('change', () => {
-            if (agree.checked) agreeError.style.display = 'none';
+        document.getElementById('resume').addEventListener('change', function() {
+            if (this.files.length) document.getElementById('resumeError').style.display = 'none';
         });
     </script>
 </body>
