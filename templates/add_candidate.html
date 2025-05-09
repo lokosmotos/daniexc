@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Groomer Candidate | Kucing</title>
+    <title>Add New Groomer Candidate | Purrfect Paws</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -99,7 +99,7 @@
         .form-section {
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 1px dashed var(--light-gray);
+            border-bottom: 1px dashed var(--light-gray));
         }
         
         .form-section h2 {
@@ -148,7 +148,7 @@
         input, select, textarea {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid var(--light-gray);
+            border: 1px solid var(--light-gray));
             border-radius: 8px;
             font-family: inherit;
             font-size: 0.95rem;
@@ -159,7 +159,7 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1));
         }
         
         input[type="file"] {
@@ -266,6 +266,34 @@
             display: none;
         }
         
+        .document-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+        }
+        
+        .document-item input {
+            margin-right: 0.5rem;
+        }
+        
+        .status-reason-group {
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .status-reason-group.active {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
@@ -278,6 +306,10 @@
             
             h1:before, h1:after {
                 display: none;
+            }
+            
+            .document-checklist {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -295,7 +327,7 @@
             appearance: none;
             width: 18px;
             height: 18px;
-            border: 1px solid var(--light-gray);
+            border: 1px solid var(--light-gray));
             border-radius: 4px;
             position: relative;
             cursor: pointer;
@@ -424,7 +456,7 @@
                         <label for="position" class="required">Position</label>
                         <select name="position" id="position" required>
                             <option value="">-- Select Position --</option>
-                            <option value="pet Care consultant & Sales">pet Care consultant & Sales</option>
+                            <option value="Pet Care Consultant & Sales">Pet Care Consultant & Sales</option>
                             <option value="Branch Manager">Branch Manager</option>
                             <option value="Intern - Full Stack">Intern - Full Stack</option>
                             <option value="Intern - Admin">Intern - Admin</option>
@@ -435,7 +467,7 @@
                     
                     <div class="form-group">
                         <label for="status" class="required">Status</label>
-                        <select name="status" id="status" required>
+                        <select name="status" id="status" required onchange="toggleStatusReason(this.value)">
                             <option value="">-- Select Status --</option>
                             <option value="New Application">New Application</option>
                             <option value="Interview Scheduled">Interview Scheduled</option>
@@ -449,9 +481,17 @@
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="status_reason">Status Reason (if applicable)</label>
-                        <input type="text" name="status_reason" id="status_reason" placeholder="e.g. Needs more training">
+                    <div class="form-group full-width">
+                        <div id="statusReasonGroup" class="status-reason-group">
+                            <label for="status_reason">Status Reason</label>
+                            <select name="status_reason" id="status_reason">
+                                <option value="">-- Select Reason --</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <div class="form-group" id="customReasonGroup" style="display: none; margin-top: 0.5rem;">
+                                <input type="text" name="custom_reason" id="custom_reason" placeholder="Enter specific reason">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group hidden" id="hostel-group">
@@ -534,6 +574,32 @@
                         <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple>
                         <div class="file-info">Show us your best work</div>
                     </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Documents Given (Tick all received)</label>
+                        <div class="document-checklist">
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_nda" id="doc_nda">
+                                <label for="doc_nda">NDA</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
+                                <label for="doc_offer_letter">Offer Letter</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_resume" id="doc_resume">
+                                <label for="doc_resume">Resume</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
+                                <label for="doc_candidate_form">Candidate Form</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_ic" id="doc_ic">
+                                <label for="doc_ic">IC Copy</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -549,6 +615,44 @@
     </div>
 
     <script>
+        // Status reason configuration
+        const statusReasons = {
+            'KIV': [
+                'Waiting for documents',
+                'Pending test results',
+                'Considering other candidates',
+                'Other (specify)'
+            ],
+            'Rejected': [
+                'Not qualified',
+                'Failed practical test',
+                'Failed interview',
+                'Position filled',
+                'Other (specify)'
+            ],
+            'WL': [
+                'Waiting for vacancy',
+                'Pending budget approval',
+                'Other (specify)'
+            ],
+            'Withdraw': [
+                'Candidate withdrew',
+                'Found other job',
+                'Not interested anymore',
+                'Other (specify)'
+            ],
+            'Offer Sent': [
+                'Pending acceptance',
+                'Negotiating terms',
+                'Other (specify)'
+            ],
+            'Hired': [
+                'Starting soon',
+                'Completed onboarding',
+                'Other (specify)'
+            ]
+        };
+
         // Process IC number to detect gender and calculate age
         function processICNumber(icNumber) {
             const genderDisplay = document.getElementById('genderDisplay');
@@ -606,8 +710,8 @@
             const branch = document.getElementById('branch').value;
             const hostelGroup = document.getElementById('hostel-group');
             
-            // Only show hostel for Damansara (DP), Bangi, and Wangsa Maju (WM)
-            if (['DP', 'Bangi', 'WM'].includes(branch)) {
+            // Only show hostel for Damansara (DP), Bangi (BG), and Wangsa Maju (WM)
+            if (['DP', 'BG', 'WM'].includes(branch)) {
                 hostelGroup.classList.remove('hidden');
             } else {
                 hostelGroup.classList.add('hidden');
@@ -615,6 +719,42 @@
             }
         }
         
+        // Toggle status reason based on status selection
+        function toggleStatusReason(status) {
+            const reasonGroup = document.getElementById('statusReasonGroup');
+            const reasonSelect = document.getElementById('status_reason');
+            const customReasonGroup = document.getElementById('customReasonGroup');
+            
+            // Clear previous options
+            reasonSelect.innerHTML = '<option value="">-- Select Reason --</option>';
+            customReasonGroup.style.display = 'none';
+            
+            // Show/hide reason group based on status
+            if (statusReasons[status]) {
+                reasonGroup.classList.add('active');
+                
+                // Add relevant reasons
+                statusReasons[status].forEach(reason => {
+                    const option = document.createElement('option');
+                    option.value = reason;
+                    option.textContent = reason;
+                    reasonSelect.appendChild(option);
+                });
+            } else {
+                reasonGroup.classList.remove('active');
+            }
+        }
+
+        // Handle custom reason selection
+        document.getElementById('status_reason').addEventListener('change', function() {
+            const customReasonGroup = document.getElementById('customReasonGroup');
+            if (this.value === 'Other (specify)') {
+                customReasonGroup.style.display = 'block';
+            } else {
+                customReasonGroup.style.display = 'none';
+            }
+        });
+
         // Form validation
         const form = document.getElementById('candidateForm');
         
