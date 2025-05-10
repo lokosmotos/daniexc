@@ -119,6 +119,47 @@ def dashboard():
         flash('Access denied.')
         return redirect(url_for('login'))
 
+@app.route('/schedule_interview', methods=['POST'])
+def schedule_interview():
+    candidate_id = request.form.get('candidate_id')
+    interview_date = request.form.get('interview_date')
+    interview_time = request.form.get('interview_time')
+    
+    # Combine date and time and update candidate record
+    candidate = Candidate.query.get(candidate_id)
+    if candidate:
+        candidate.date_iv = datetime.strptime(
+            f"{interview_date} {interview_time}", 
+            "%Y-%m-%d %H:%M"
+        )
+        db.session.commit()
+        flash('Interview scheduled successfully', 'success')
+    else:
+        flash('Candidate not found', 'danger')
+    
+    return redirect(url_for('dashboard'))
+
+@app.route('/bulk_schedule_interviews', methods=['POST'])
+def bulk_schedule_interviews():
+    candidate_ids = request.form.getlist('candidate_ids')
+    interview_date = request.form.get('interview_date')
+    interview_time = request.form.get('interview_time')
+    
+    # Process each selected candidate
+    for candidate_id in candidate_ids:
+        candidate = Candidate.query.get(candidate_id)
+        if candidate:
+            candidate.date_iv = datetime.strptime(
+                f"{interview_date} {interview_time}", 
+                "%Y-%m-%d %H:%M"
+            )
+    
+    db.session.commit()
+    flash(f'Scheduled {len(candidate_ids)} interviews', 'success')
+    return redirect(url_for('dashboard'))
+
+
+
 @app.route('/add_candidate', methods=['GET', 'POST'])
 @login_required
 def add_candidate():
