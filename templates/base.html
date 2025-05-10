@@ -9,6 +9,7 @@
         <a href="/" class="mr-4">Home</a>
         <a href="/add" class="mr-4">Add Candidate</a>
         <a href="/pool">Candidates Pool</a>
+        <a href="{{ url_for('apply') }}" class="btn">Apply for Position</a>
     </nav>
     <div>
         {% block content %}{% endblock %}
