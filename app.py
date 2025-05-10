@@ -82,23 +82,25 @@ def dashboard():
     if current_user.role == 'HR':
         # Initialize all possible statuses
         all_statuses = [
-            'New Application',
-            'Interview Scheduled',
-            'Practical Test Scheduled',
-            'Offer Sent',
-            'Hired',
-            'KIV',
-            'Rejected',
-            'WL',
-            'Withdraw'
-            today = datetime.today().date()
+    'New Application',
+    'Interview Scheduled',
+    'Practical Test Scheduled',
+    'Offer Sent',
+    'Hired',
+    'KIV',
+    'Rejected',
+    'WL',
+    'Withdraw'
+]
+
+today = datetime.today().date()
     today_interviews = Candidate.query.filter(
         Candidate.status == 'Interview Scheduled',
         func.date(Candidate.date_iv) == today
     ).order_by(Candidate.date_iv).all()
     
     return render_template('dashboard.html', 
-                         today_interviews=today_interview
+                         today_interviews=today_interviews
         ]
         
         # Get status counts
