@@ -105,31 +105,37 @@
             <a href="#" onclick="openBulkScheduleModal()" class="btn">Bulk Schedule Interviews</a>
         </div>
         
-        <div class="card">
-            div class="card">
-    <h2>Add Candidate Pool</h2>
-    <div class="status-pool status-Add-Candidate">
-        <div class="pool-header">
-            <h3>Recently Added Candidates <span class="status-badge">{{ recent_candidates|length }}</span></h3>
-        </div>
-        <div class="pool-content">
+        <!-- Add this near the top of your dashboard.html -->
+<div class="card">
+    <div class="card-header">
+        <h2>Quick Add</h2>
+        <a href="{{ url_for('add_candidate') }}" class="btn btn-primary">Add New Candidate</a>
+    </div>
+    
+    <div class="recent-additions">
+        <h3>Recently Added <small>(last 24 hours)</small></h3>
+        <div class="recent-candidates-grid">
             {% for candidate in recent_candidates %}
-            <div class="candidate-card">
-                <div class="candidate-name">{{ candidate.name }}</div>
-                <div class="candidate-details">
-                    {{ candidate.position }} | {{ candidate.branch }} | {{ candidate.status }}
+            <div class="recent-candidate">
+                <div class="candidate-avatar">{{ candidate.name|first|upper }}</div>
+                <div class="candidate-info">
+                    <strong>{{ candidate.name }}</strong>
+                    <div>{{ candidate.position }}</div>
+                    <div class="small-text">{{ candidate.branch }}</div>
                 </div>
                 <div class="candidate-actions">
-                    <a href="#" onclick="event.stopPropagation();openInterviewModal('{{ candidate.id }}')">
-                        Schedule Interview
+                    <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}" title="View">
+                        <i class="fas fa-eye"></i>
                     </a>
-                    <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                    <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
+                    <a href="#" onclick="openInterviewModal('{{ candidate.id }}')" title="Schedule Interview">
+                        <i class="fas fa-calendar-alt"></i>
+                    </a>
                 </div>
             </div>
             {% else %}
-            <div style="padding: 20px; text-align: center; color: #999;">
-                No recently added candidates
+            <div class="no-recent">
+                <i class="fas fa-users-slash"></i>
+                <p>No candidates added recently</p>
             </div>
             {% endfor %}
         </div>
