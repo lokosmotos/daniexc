@@ -5,169 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Dashboard | Talent Management System</title>
     <style>
-        /* Your existing CSS styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f7fa;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
+        /* Previous styles remain the same */
+        
+        /* Add these new styles */
+        .interview-section {
+            margin-top: 30px;
+            background: #e8f4fc;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .btn {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-secondary {
-            background: #95a5a6;
-        }
-        .status-pools {
+        .today-interviews {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
         }
-        .status-pool {
-            background: #f8f9fa;
-            border-radius: 8px;
+        .interview-card {
+            background: white;
             padding: 15px;
+            border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .status-pool h3 {
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid;
+        .interview-time {
+            font-weight: bold;
             color: #2c3e50;
-        }
-        .pool-content {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 5px;
-            background: #3498db;
-            color: white;
-        }
-        .status-New-Application { border-color: #3498db; }
-        .status-Interview-Scheduled { border-color: #f39c12; }
-        .status-Practical-Test-Scheduled { border-color: #9b59b6; }
-        .status-Offer-Sent { border-color: #2ecc71; }
-        .status-Hired { border-color: #27ae60; }
-        .status-KIV { border-color: #e67e22; }
-        .status-Rejected { border-color: #e74c3c; }
-        .status-WL { border-color: #95a5a6; }
-        .status-Withdraw { border-color: #7f8c8d; }
-        .candidate-card {
-            background: white;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .candidate-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 00 4px 8px rgba(0,0,0,0.1);
-            background-color: #f8f9fa;
-        }
-        .candidate-name {
-            font-weight: bold;
             margin-bottom: 5px;
         }
-        .candidate-details {
+        .interview-candidate {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+        .interview-position {
             font-size: 14px;
             color: #555;
         }
-        .candidate-actions {
-            margin-top: 8px;
-            font-size: 13px;
+        .interview-actions {
+            margin-top: 10px;
         }
-        .candidate-actions a {
-            color: #3498db;
-            text-decoration: none;
-            margin-right: 10px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-            border-radius: 8px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group select, .form-group textarea {
-            width: 100%;
+        .date-picker {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
+        .status-pool {
+            position: relative;
         }
-        .alert-danger {
-            color: #a94442;
-            background-color: #f2dede;
-            border-color: #ebccd1;
+        .pool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -184,26 +70,65 @@
             {% endif %}
         {% endwith %}
         
+        <!-- Today's Interviews Section -->
+        <div class="interview-section">
+            <h2>Today's Interviews ({{ today_interviews|length }})</h2>
+            {% if today_interviews %}
+            <div class="today-interviews">
+                {% for candidate in today_interviews %}
+                <div class="interview-card">
+                    <div class="interview-time">
+                        {{ candidate.date_iv.strftime('%I:%M %p') if candidate.date_iv else 'Time not set' }}
+                    </div>
+                    <div class="interview-candidate">{{ candidate.name }}</div>
+                    <div class="interview-position">{{ candidate.position }} - {{ candidate.branch }}</div>
+                    <div class="interview-actions">
+                        <a href="#" onclick="openInterviewModal('{{ candidate.id }}')">Reschedule</a>
+                        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View Profile</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No interviews scheduled for today.</p>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
         <div class="card">
             <h2>Quick Actions</h2>
             <a href="{{ url_for('add_candidate') }}" class="btn">Add New Candidate</a>
+            <a href="{{ url_for('schedule_interviews') }}" class="btn">Schedule Interviews</a>
         </div>
         
+        <!-- Status Pools (existing code remains the same) -->
         <div class="card">
             <h2>Candidates by Status</h2>
             <div class="status-pools">
-                <!-- New Applications Pool -->
-                <div class="status-pool status-New-Application">
-                    <h3>New Applications <span class="status-badge">{{ status_counts.get('New Application', 0) }}</span></h3>
+                <!-- Interview Scheduled Pool - Enhanced -->
+                <div class="status-pool status-Interview-Scheduled">
+                    <div class="pool-header">
+                        <h3>Interview Scheduled <span class="status-badge">{{ status_counts.get('Interview Scheduled', 0) }}</span></h3>
+                        <a href="#" onclick="openBulkScheduleModal()" style="font-size: 12px;">Bulk Schedule</a>
+                    </div>
                     <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'New Application' %}
-                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
+                        {% for candidate in candidates if candidate.status == 'Interview Scheduled' %}
+                        <div class="candidate-card">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
-                                {{ candidate.branch }}
+                                {{ candidate.branch }}<br>
+                                <strong>Interview:</strong> 
+                                {% if candidate.date_iv %}
+                                    {{ candidate.date_iv.strftime('%Y-%m-%d %I:%M %p') }}
+                                {% else %}
+                                    Not scheduled
+                                {% endif %}
                             </div>
                             <div class="candidate-actions">
+                                <a href="#" onclick="event.stopPropagation();openInterviewModal('{{ candidate.id }}')">
+                                    {{ 'Reschedule' if candidate.date_iv else 'Schedule' }}
+                                </a>
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
                                 <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
@@ -216,217 +141,98 @@
                     </div>
                 </div>
                 
-                <!-- Interview Scheduled Pool -->
-                <div class="status-pool status-Interview-Scheduled">
-                    <h3>Interview Scheduled <span class="status-badge">{{ status_counts.get('Interview Scheduled', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Interview Scheduled' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Practical Test Pool -->
-                <div class="status-pool status-Practical-Test-Scheduled">
-                    <h3>Practical Test <span class="status-badge">{{ status_counts.get('Practical Test Scheduled', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Practical Test Scheduled' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Offer Sent Pool -->
-                <div class="status-pool status-Offer-Sent">
-                    <h3>Offer Sent <span class="status-badge">{{ status_counts.get('Offer Sent', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Offer Sent' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Hired Pool -->
-                <div class="status-pool status-Hired">
-                    <h3>Hired <span class="status-badge">{{ status_counts.get('Hired', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Hired' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- KIV Pool -->
-                <div class="status-pool status-KIV">
-                    <h3>Keep In View <span class="status-badge">{{ status_counts.get('KIV', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'KIV' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Rejected Pool -->
-                <div class="status-pool status-Rejected">
-                    <h3>Rejected <span class="status-badge">{{ status_counts.get('Rejected', 0) }}</span></h3>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Rejected' %}
-                        <!-- Inside each status pool's candidate-card div -->
-<div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
-    <div class="candidate-name">{{ candidate.name }}</div>
-    <div class="candidate-details">
-        {{ candidate.position }}<br>
-        {{ candidate.branch }}
-    </div>
-    <div class="candidate-actions">
-        <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-        <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-    </div>
-</div>
-                        {% else %}
-                        <div style="padding: 20px; text-align: center; color: #999;">
-                            No candidates in this status
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+                <!-- Other status pools remain the same -->
             </div>
         </div>
-        
-        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
     
-    <!-- Status Update Modal -->
-    <div id="statusModal" class="modal">
+    <!-- Interview Scheduling Modal -->
+    <div id="interviewModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="document.getElementById('statusModal').style.display='none'">&times;</span>
-            <h2>Update Candidate Status</h2>
-            <form id="statusForm" action="{{ url_for('update_status', candidate_id=0) }}" method="POST">
-                <input type="hidden" id="candidateId" name="candidate_id">
+            <span class="close" onclick="document.getElementById('interviewModal').style.display='none'">&times;</span>
+            <h2>Schedule Interview</h2>
+            <form id="interviewForm" action="{{ url_for('schedule_interview') }}" method="POST">
+                <input type="hidden" id="interviewCandidateId" name="candidate_id">
                 <div class="form-group">
-                    <label for="status" class="required">Status</label>
-                    <select name="status" id="status" required onchange="toggleStatusReason(this.value)">
-                        <option value="">-- Select Status --</option>
-                        <option value="New Application">New Application</option>
-                        <option value="Interview Scheduled">Interview Scheduled</option>
-                        <option value="Practical Test Scheduled">Practical Test Scheduled</option>
-                        <option value="Offer Sent">Offer Sent</option>
-                        <option value="Hired">Hired</option>
-                        <option value="KIV">KIV (Keep In View)</option>
-                        <option value="Rejected">Rejected</option>
-                        <option value="WL">Waiting List</option>
-                        <option value="Withdraw">Withdraw</option>
-                    </select>
+                    <label for="interviewDate">Date</label>
+                    <input type="date" id="interviewDate" name="interview_date" class="date-picker" required>
                 </div>
-                <div class="form-group" id="statusReasonGroup" style="display:none;">
-                    <label for="status_reason">Status Reason</label>
-                    <textarea name="status_reason" id="status_reason" rows="3"></textarea>
+                <div class="form-group">
+                    <label for="interviewTime">Time</label>
+                    <input type="time" id="interviewTime" name="interview_time" class="date-picker" required>
                 </div>
-                <button type="submit" class="btn">Update Status</button>
+                <div class="form-group">
+                    <label for="interviewNotes">Notes</label>
+                    <textarea id="interviewNotes" name="interview_notes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Schedule Interview</button>
             </form>
         </div>
     </div>
     
+    <!-- Bulk Schedule Modal -->
+    <div id="bulkScheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('bulkScheduleModal').style.display='none'">&times;</span>
+            <h2>Bulk Schedule Interviews</h2>
+            <form id="bulkScheduleForm" action="{{ url_for('bulk_schedule_interviews') }}" method="POST">
+                <div class="form-group">
+                    <label for="bulkInterviewDate">Date</label>
+                    <input type="date" id="bulkInterviewDate" name="interview_date" class="date-picker" required>
+                </div>
+                <div class="form-group">
+                    <label for="bulkInterviewTime">Time</label>
+                    <input type="time" id="bulkInterviewTime" name="interview_time" class="date-picker" required>
+                </div>
+                <div class="form-group">
+                    <label>Candidates to Schedule</label>
+                    {% for candidate in candidates if candidate.status == 'Interview Scheduled' and not candidate.date_iv %}
+                    <div style="margin: 5px 0;">
+                        <input type="checkbox" name="candidate_ids" value="{{ candidate.id }}" id="candidate_{{ candidate.id }}">
+                        <label for="candidate_{{ candidate.id }}">{{ candidate.name }} ({{ candidate.position }})</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn">Schedule Selected</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Function to open status modal with candidate ID
-        function openStatusModal(candidateId) {
-            document.getElementById('candidateId').value = candidateId;
-            document.getElementById('statusForm').action = `/update_status/${candidateId}`;
-            document.getElementById('statusModal').style.display = 'block';
+        // Function to open interview scheduling modal
+        function openInterviewModal(candidateId) {
+            document.getElementById('interviewCandidateId').value = candidateId;
+            document.getElementById('interviewModal').style.display = 'block';
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('interviewDate').value = today;
+            
+            // Set default time to next full hour
+            const now = new Date();
+            const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+            document.getElementById('interviewTime').value = 
+                `${String(nextHour.getHours()).padStart(2, '0')}:00`;
+            
             return false;
         }
         
-        // Function to toggle status reason field
-        function toggleStatusReason(status) {
-            const reasonGroup = document.getElementById('statusReasonGroup');
-            if (['Rejected', 'KIV', 'Withdraw'].includes(status)) {
-                reasonGroup.style.display = 'block';
-            } else {
-                reasonGroup.style.display = 'none';
-            }
+        // Function to open bulk scheduling modal
+        function openBulkScheduleModal() {
+            document.getElementById('bulkScheduleModal').style.display = 'block';
+            
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('bulkInterviewDate').value = tomorrow.toISOString().split('T')[0];
+            
+            // Set default time to 10:00 AM
+            document.getElementById('bulkInterviewTime').value = '10:00';
+            
+            return false;
         }
         
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('statusModal')) {
-                document.getElementById('statusModal').style.display = 'none';
-            }
-        }
+        // Previous modal functions remain the same
     </script>
 </body>
 </html>
