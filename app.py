@@ -2,7 +2,9 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
+from datetime import datetime
+from collections import defaultdict
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -13,13 +15,11 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(50), nullable=False)
-
 
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +30,8 @@ class Candidate(db.Model):
     phone_number = db.Column(db.String(15), nullable=False)
     email = db.Column(db.String(150), nullable=False)
     resume_url = db.Column(db.String(500), nullable=True)
-    status = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), nullable=False, default='New Application')
+    status_reason = db.Column(db.String(500), nullable=True)
     date_iv = db.Column(db.Date, nullable=True)
     date_training = db.Column(db.Date, nullable=True)
     offer_letter = db.Column(db.String(150), nullable=True)
@@ -38,12 +39,11 @@ class Candidate(db.Model):
     candidate_form = db.Column(db.String(150), nullable=True)
     nda = db.Column(db.String(150), nullable=True)
     hostel_required = db.Column(db.Boolean, nullable=False, default=False)
-
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
 
 @app.before_first_request
 def create_user():
@@ -54,11 +54,9 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
 
-
 @app.route('/')
 def home():
     return redirect(url_for('login'))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,55 +72,63 @@ def login():
             flash('Invalid username or password')
     return render_template('login.html')
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.role == 'HR':
-        candidates = Candidate.query.all()  # Retrieve all candidates
-        return render_template('dashboard.html', user=current_user, candidates=candidates)
+        # Initialize all possible statuses
+        all_statuses = [
+            'New Application',
+            'Interview Scheduled',
+            'Practical Test Scheduled',
+            'Offer Sent',
+            'Hired',
+            'KIV',
+            'Rejected',
+            'WL',
+            'Withdraw'
+        ]
+        
+        # Get status counts
+        status_counts = defaultdict(int)
+        counts = db.session.query(
+            Candidate.status,
+            func.count(Candidate.id)
+        ).group_by(Candidate.status).all()
+        
+        for status, count in counts:
+            status_counts[status] = count
+        
+        # Ensure all statuses are represented
+        for status in all_statuses:
+            if status not in status_counts:
+                status_counts[status] = 0
+        
+        candidates = Candidate.query.order_by(Candidate.date_created.desc()).all()
+        
+        return render_template('dashboard.html',
+                           user=current_user,
+                           candidates=candidates,
+                           status_counts=dict(status_counts),
+                           current_date=datetime.now().strftime('%Y-%m-%d'))
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
 
-
 @app.route('/add_candidate', methods=['GET', 'POST'])
 @login_required
 def add_candidate():
-    if current_user.role == 'HR':  # Allow HR to add candidates
+    if current_user.role == 'HR':
         if request.method == 'POST':
-            name = request.form.get('name')
-            age = request.form.get('age')
-            position = request.form.get('position')
-            branch = request.form.get('branch')
-            phone_number = request.form.get('phone_number')
-            email = request.form.get('email')
-            resume_url = request.form.get('resume_url')
-            status = request.form.get('status')
-            date_iv = request.form.get('date_iv')
-            date_training = request.form.get('date_training')
-            offer_letter = request.form.get('offer_letter')
-            ic = request.form.get('ic')
-            candidate_form = request.form.get('candidate_form')
-            nda = request.form.get('nda')
-            hostel_required = True if branch in ['JB', 'DP', 'SA'] else False
-
+            # ... (your existing add candidate code)
+            status = request.form.get('status', 'New Application')
+            status_reason = request.form.get('status_reason', None)
+            
             new_candidate = Candidate(
-                name=name,
-                age=age,
-                position=position,
-                branch=branch,
-                phone_number=phone_number,
-                email=email,
-                resume_url=resume_url,
+                # ... (your existing fields)
                 status=status,
-                date_iv=date_iv,
-                date_training=date_training,
-                offer_letter=offer_letter,
-                ic=ic,
-                candidate_form=candidate_form,
-                nda=nda,
-                hostel_required=hostel_required
+                status_reason=status_reason if status in ['Rejected', 'KIV', 'Withdraw'] else None,
+                # ... (other fields)
             )
             db.session.add(new_candidate)
             db.session.commit()
@@ -134,13 +140,38 @@ def add_candidate():
         flash('Access denied.')
         return redirect(url_for('login'))
 
+@app.route('/update_status/<int:candidate_id>', methods=['POST'])
+@login_required
+def update_status(candidate_id):
+    if current_user.role == 'HR':
+        candidate = Candidate.query.get_or_404(candidate_id)
+        new_status = request.form.get('status')
+        status_reason = request.form.get('status_reason', None)
+        
+        candidate.status = new_status
+        if new_status in ['Rejected', 'KIV', 'Withdraw']:
+            candidate.status_reason = status_reason
+        else:
+            candidate.status_reason = None
+        
+        db.session.commit()
+        flash('Status updated successfully!')
+        return redirect(url_for('dashboard'))
+    else:
+        flash('Access denied.')
+        return redirect(url_for('login'))
+
+@app.route('/view_candidate/<int:candidate_id>')
+@login_required
+def view_candidate(candidate_id):
+    candidate = Candidate.query.get_or_404(candidate_id)
+    return render_template('view_candidate.html', candidate=candidate)
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
