@@ -139,6 +139,46 @@ def add_candidate():
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
+@app.route('/apply', methods=['GET', 'POST'])
+def apply():
+    if request.method == 'POST':
+        # Handle form submission
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        position = request.form.get('position')
+        
+        # Handle file upload
+        resume = request.files.get('resume')
+        if resume and allowed_file(resume.filename):
+            filename = secure_filename(resume.filename)
+            resume.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        else:
+            filename = None
+        
+        # Create new candidate
+        new_candidate = Candidate(
+            name=name,
+            email=email,
+            phone=phone,
+            position=position,
+            resume_filename=filename,
+            status='New Application'
+        )
+        
+        db.session.add(new_candidate)
+        db.session.commit()
+        
+        flash('Application submitted successfully!', 'success')
+        return redirect(url_for('apply'))
+    
+    return render_template('apply.html')
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'pdf', 'doc', 'docx'}
+
+
 
 @app.route('/update_status/<int:candidate_id>', methods=['POST'])
 @login_required
