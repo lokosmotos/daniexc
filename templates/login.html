@@ -2,99 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cat World Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Candidate | HR System</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to right, #fce3ec, #f9f9f9);
-            background-image: url('https://cdn.pixabay.com/photo/2017/01/31/13/13/cat-2022346_1280.png');
-            background-repeat: no-repeat;
-            background-position: bottom right;
-            background-size: 300px;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
+            background-color: #f5f7fa;
         }
-
-        .login-container {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
         }
-
-        label {
-            font-size: 14px;
+        .candidate-details {
+            margin-top: 20px;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
             color: #555;
         }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
+        .detail-value {
+            flex: 1;
         }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #4285F4;
+        .btn {
+            display: inline-block;
+            background: #3498db;
             color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
         }
-
-        input[type="submit"]:hover {
-            background-color: #357ae8;
-        }
-
-        .messages {
-            margin-bottom: 15px;
-            color: #d8000c;
-            background-color: #ffbaba;
-            padding: 10px;
-            border-radius: 5px;
-            list-style: none;
+        .btn-secondary {
+            background: #95a5a6;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Welcome CAT Mommyy 🐾</h2>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class="messages">
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-        <form method="POST">
-            <label>Username:</label>
-            <input type="text" name="username" required>
-
-            <label>Password:</label>
-            <input type="password" name="password" required>
-
-            <input type="submit" value="Login">
-        </form>
+    <div class="container">
+        <h1>Candidate Details</h1>
+        <a href="{{ url_for('dashboard') }}" class="btn">Back to Dashboard</a>
+        
+        <div class="candidate-details">
+            <div class="detail-row">
+                <div class="detail-label">Name:</div>
+                <div class="detail-value">{{ candidate.name }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Age:</div>
+                <div class="detail-value">{{ candidate.age }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Position:</div>
+                <div class="detail-value">{{ candidate.position }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Branch:</div>
+                <div class="detail-value">{{ candidate.branch }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Phone Number:</div>
+                <div class="detail-value">{{ candidate.phone_number }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email:</div>
+                <div class="detail-value">{{ candidate.email }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Status:</div>
+                <div class="detail-value">{{ candidate.status }}</div>
+            </div>
+            {% if candidate.status_reason %}
+            <div class="detail-row">
+                <div class="detail-label">Status Reason:</div>
+                <div class="detail-value">{{ candidate.status_reason }}</div>
+            </div>
+            {% endif %}
+            {% if candidate.resume_url %}
+            <div class="detail-row">
+                <div class="detail-label">Resume:</div>
+                <div class="detail-value"><a href="{{ candidate.resume_url }}" target="_blank">View Resume</a></div>
+            </div>
+            {% endif %}
+            {% if candidate.date_iv %}
+            <div class="detail-row">
+                <div class="detail-label">Interview Date:</div>
+                <div class="detail-value">{{ candidate.date_iv }}</div>
+            </div>
+            {% endif %}
+            {% if candidate.date_training %}
+            <div class="detail-row">
+                <div class="detail-label">Training Date:</div>
+                <div class="detail-value">{{ candidate.date_training }}</div>
+            </div>
+            {% endif %}
+            {% if candidate.offer_letter %}
+            <div class="detail-row">
+                <div class="detail-label">Offer Letter:</div>
+                <div class="detail-value">{{ candidate.offer_letter }}</div>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <div class="detail-label">Hostel Required:</div>
+                <div class="detail-value">{{ 'Yes' if candidate.hostel_required else 'No' }}</div>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="window.location='{{ url_for('dashboard') }}'">Back to Dashboard</button>
     </div>
 </body>
 </html>
