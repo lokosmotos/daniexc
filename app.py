@@ -142,35 +142,41 @@ def add_candidate():
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
     if request.method == 'POST':
-        # Handle form submission
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        position = request.form.get('position')
-        
-        # Handle file upload
-        resume = request.files.get('resume')
-        if resume and allowed_file(resume.filename):
-            filename = secure_filename(resume.filename)
-            resume.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        else:
-            filename = None
-        
-        # Create new candidate
-        new_candidate = Candidate(
-            name=name,
-            email=email,
-            phone=phone,
-            position=position,
-            resume_filename=filename,
-            status='New Application'
-        )
-        
-        db.session.add(new_candidate)
-        db.session.commit()
-        
-        flash('Application submitted successfully!', 'success')
-        return redirect(url_for('apply'))
+        try:
+            name = request.form.get('name')
+            email = request.form.get('email')
+            phone = request.form.get('phone_number')  # Changed to match your model
+            position = request.form.get('position')
+            
+            # Handle file upload
+            resume = request.files.get('resume')
+            resume_url = None
+            if resume and allowed_file(resume.filename):
+                filename = secure_filename(resume.filename)
+                resume.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                resume_url = filename  # Or full path if needed
+            
+            # Create new candidate - match your model fields
+            new_candidate = Candidate(
+                name=name,
+                email=email,
+                phone_number=phone,  # Match model field name
+                position=position,
+                resume_url=resume_url,  # Match model field name
+                status='New Application',
+                branch='HQ',  # Set default or get from form
+                age=0,  # Set default or add to form
+                hostel_required=False  # Set default or add to form
+            )
+            
+            db.session.add(new_candidate)
+            db.session.commit()
+            flash('Application submitted successfully!', 'success')
+            return redirect(url_for('apply'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error submitting application: {str(e)}', 'danger')
     
     return render_template('apply.html')
 
