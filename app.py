@@ -95,9 +95,10 @@ def dashboard():
 
 today = datetime.today().date()
     today_interviews = Candidate.query.filter(
-        Candidate.status == 'Interview Scheduled',
-        func.date(Candidate.date_iv) == today
-    ).order_by(Candidate.date_iv).all()
+    Candidate.status == 'Interview Scheduled',
+    Candidate.interview_date == today
+).all()
+
     
     return render_template('dashboard.html', 
                          today_interviews=today_interviews
