@@ -76,7 +76,7 @@ def login():
             flash('Invalid username or password')
     return render_template('login.html')
 
-app.route('/dashboard')
+@app.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.role == 'HR':
@@ -129,7 +129,8 @@ def dashboard():
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
-
+        
+@login_required
 @app.route('/schedule_interview', methods=['POST'])
 def schedule_interview():
     candidate_id = request.form.get('candidate_id')
@@ -278,7 +279,8 @@ def apply():
             
             db.session.add(new_candidate)
             db.session.commit()
-            
+
+            from flask import Markup
             flash_message = Markup(
                 f'Candidate {name} added successfully! '
                 f'<a href="{url_for("view_candidate", candidate_id=new_candidate.id)}" class="alert-link">View</a> | '
