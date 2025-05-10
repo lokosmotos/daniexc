@@ -76,7 +76,7 @@ def login():
             flash('Invalid username or password')
     return render_template('login.html')
 
-@app.route('/dashboard')
+app.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.role == 'HR':
@@ -98,6 +98,9 @@ def dashboard():
             Candidate.status == 'Interview Scheduled',
             func.date(Candidate.date_iv) == today
         ).all()
+
+        # Get recent candidates (last 5 added)
+        recent_candidates = Candidate.query.order_by(Candidate.date_created.desc()).limit(5).all()
 
         # Get status counts
         status_counts = defaultdict(int)
@@ -121,7 +124,8 @@ def dashboard():
                            candidates=candidates,
                            status_counts=dict(status_counts),
                            current_date=datetime.now().strftime('%Y-%m-%d'),
-                           today_interviews=today_interviews)
+                           today_interviews=today_interviews,
+                           recent_candidates=recent_candidates)
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
