@@ -99,7 +99,7 @@
         .form-section {
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 1px dashed var(--light-gray));
+            border-bottom: 1px dashed var(--light-gray);
         }
         
         .form-section h2 {
@@ -148,7 +148,7 @@
         input, select, textarea {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid var(--light-gray));
+            border: 1px solid var(--light-gray);
             border-radius: 8px;
             font-family: inherit;
             font-size: 0.95rem;
@@ -159,11 +159,7 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1));
-        }
-        
-        input[type="file"] {
-            padding: 0.5rem;
+            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
         }
         
         .gender-indicator {
@@ -249,6 +245,13 @@
             display: none;
         }
         
+        .error-message {
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+        
         .file-info {
             font-size: 0.8rem;
             color: var(--gray);
@@ -294,6 +297,54 @@
             display: block;
         }
         
+        /* File Upload Styling */
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 5px;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--primary);
+        }
+        
+        .file-upload-text {
+            flex-grow: 1;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .file-upload-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            margin-left: 1rem;
+            transition: background 0.2s;
+        }
+        
+        .file-upload-button:hover {
+            background: var(--primary-dark);
+        }
+        
+        input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
@@ -327,7 +378,7 @@
             appearance: none;
             width: 18px;
             height: 18px;
-            border: 1px solid var(--light-gray));
+            border: 1px solid var(--light-gray);
             border-radius: 4px;
             position: relative;
             cursor: pointer;
@@ -386,41 +437,46 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="name" class="required">Full Name</label>
-                        <input type="text" name="name" id="name" required placeholder="e.g. Ahmad bin Ali">
-                        <span id="nameError" class="error">Please enter the candidate's full name</span>
+                        <input type="text" name="name" id="name" required placeholder="e.g. Ahmad bin Ali" 
+                               pattern="[A-Za-z\s]{3,}" title="Please enter at least 3 alphabetical characters"
+                               oninput="validateName()">
+                        <span id="nameError" class="error-message">Please enter a valid full name (minimum 3 characters, letters only)</span>
                     </div>
                     
                     <div class="form-group">
                         <label for="age" class="required">Age</label>
                         <input type="number" name="age" id="age" required min="18" max="70" placeholder="18-70" readonly>
-                        <span id="ageDisplay" class="age-display">Age will auto-calculate</span>
-                        <span id="ageError" class="error">Age must be between 18-70 years</span>
+                        <span id="ageDisplay" class="age-display">Age will auto-calculate from IC</span>
+                        <span id="ageError" class="error-message">Age must be between 18-70 years</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="ic">IC Number</label>
+                        <label for="ic" class="required">IC Number</label>
                         <input type="text" name="ic" id="ic" required placeholder="e.g. 891103105887" 
-                               pattern="\d{12}" maxlength="12" oninput="processICNumber(this.value)">
+                               pattern="\d{12}" maxlength="12" oninput="processICNumber(this.value)"
+                               onblur="validateICNumber()">
                         <span id="genderDisplay" class="gender-indicator" style="display:none;"></span>
-                        <span id="icError" class="error">Please enter a valid 12-digit IC number</span>
-                        <div class="form-note">Format: YYMMDD-BP-###G (12 digits)</div>
+                        <span id="icError" class="error-message">Please enter a valid 12-digit IC number</span>
+                        <div class="form-note">Format: YYMMDD-BP-###G (12 digits, no dashes)</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="phone_number" class="required">Phone Number</label>
                         <input type="tel" name="phone_number" id="phone_number" required 
-                               pattern="[0-9]{10,11}" placeholder="e.g. 0123456789">
-                        <span id="phoneNumberError" class="error">Please enter a valid phone number (10-11 digits)</span>
+                               pattern="[0-9]{10,11}" placeholder="e.g. 0123456789"
+                               oninput="validatePhoneNumber()">
+                        <span id="phoneNumberError" class="error-message">Please enter a valid phone number (10-11 digits)</span>
                     </div>
                     
                     <div class="form-group">
                         <label for="email" class="required">Email</label>
-                        <input type="email" name="email" id="email" required placeholder="e.g. ahmad@example.com">
-                        <span id="emailError" class="error">Please enter a valid email address</span>
+                        <input type="email" name="email" id="email" required placeholder="e.g. ahmad@example.com"
+                               oninput="validateEmail()">
+                        <span id="emailError" class="error-message">Please enter a valid email address</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="experience">Sales Experience (years)</label>
+                        <label for="experience">Grooming Experience (years)</label>
                         <input type="number" name="experience" id="experience" min="0" max="50" placeholder="e.g. 3">
                     </div>
                 </div>
@@ -456,12 +512,11 @@
                         <label for="position" class="required">Position</label>
                         <select name="position" id="position" required>
                             <option value="">-- Select Position --</option>
-                            <option value="Pet Care Consultant & Sales">Pet Care Consultant & Sales</option>
-                            <option value="Branch Manager">Branch Manager</option>
-                            <option value="Intern - Full Stack">Intern - Full Stack</option>
-                            <option value="Intern - Admin">Intern - Admin</option>
-                            <option value="Intern - HR">Intern - HR</option>
-                            <option value="HR">HR</option>
+                            <option value="Pet Groomer">Pet Groomer</option>
+                            <option value="Senior Groomer">Senior Groomer</option>
+                            <option value="Grooming Manager">Grooming Manager</option>
+                            <option value="Grooming Trainer">Grooming Trainer</option>
+                            <option value="Grooming Assistant">Grooming Assistant</option>
                         </select>
                     </div>
                     
@@ -542,288 +597,110 @@
             </div>
             
             <!-- Documents Section -->
-<div class="form-section">
-    <h2>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        Documents
-    </h2>
-    <div class="form-grid">
-        <div class="form-group">
-            <label for="resume" class="required">Resume (PDF, DOCX, DOC)</label>
-            <div class="file-upload-wrapper">
-                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required
-                       onchange="validateFile(this, 'resumeError', 5)">
-                <label for="resume" class="file-upload-label">
-                    <span class="file-upload-text">Choose file</span>
-                    <span class="file-upload-button">Browse</span>
-                </label>
-            </div>
-            <div class="file-info">Max file size: 5MB</div>
-            <span id="resumeError" class="error-message"></span>
-        </div>
-        
-        <div class="form-group">
-            <label for="ic_copy">IC Copy (PDF, JPG, PNG)</label>
-            <div class="file-upload-wrapper">
-                <input type="file" name="ic_copy" id="ic_copy" accept=".pdf,.jpg,.jpeg,.png"
-                       onchange="validateFile(this, 'icCopyError', 2)">
-                <label for="ic_copy" class="file-upload-label">
-                    <span class="file-upload-text">Choose file</span>
-                    <span class="file-upload-button">Browse</span>
-                </label>
-            </div>
-            <div class="file-info">Max file size: 2MB</div>
-            <span id="icCopyError" class="error-message"></span>
-        </div>
-        
-        <div class="form-group">
-            <label for="certificates">Grooming Certificates (if any)</label>
-            <div class="file-upload-wrapper">
-                <input type="file" name="certificates" id="certificates" accept=".pdf,.jpg,.jpeg,.png" multiple
-                       onchange="validateFiles(this, 'certificatesError', 5)">
-                <label for="certificates" class="file-upload-label">
-                    <span class="file-upload-text">Choose files</span>
-                    <span class="file-upload-button">Browse</span>
-                </label>
-            </div>
-            <div class="file-info">You can select multiple files (5MB each)</div>
-            <span id="certificatesError" class="error-message"></span>
-        </div>
-        
-        <div class="form-group">
-            <label for="portfolio">Grooming Portfolio (Photos)</label>
-            <div class="file-upload-wrapper">
-                <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple
-                       onchange="validateFiles(this, 'portfolioError', 5)">
-                <label for="portfolio" class="file-upload-label">
-                    <span class="file-upload-text">Choose photos</span>
-                    <span class="file-upload-button">Browse</span>
-                </label>
-            </div>
-            <div class="file-info">Show us your best work (5MB each)</div>
-            <span id="portfolioError" class="error-message"></span>
-        </div>
-        
-        <div class="form-group full-width">
-            <label>Documents Given (Tick all received)</label>
-            <div class="document-checklist">
-                <div class="document-item">
-                    <input type="checkbox" name="doc_nda" id="doc_nda">
-                    <label for="doc_nda">NDA</label>
+            <div class="form-section">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Documents
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="resume" class="required">Resume (PDF, DOCX, DOC)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required
+                                   onchange="validateFile(this, 'resumeError', 5)">
+                            <label for="resume" class="file-upload-label">
+                                <span class="file-upload-text">Choose file</span>
+                                <span class="file-upload-button">Browse</span>
+                            </label>
+                        </div>
+                        <div class="file-info">Max file size: 5MB</div>
+                        <span id="resumeError" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ic_copy">IC Copy (PDF, JPG, PNG)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="ic_copy" id="ic_copy" accept=".pdf,.jpg,.jpeg,.png"
+                                   onchange="validateFile(this, 'icCopyError', 2)">
+                            <label for="ic_copy" class="file-upload-label">
+                                <span class="file-upload-text">Choose file</span>
+                                <span class="file-upload-button">Browse</span>
+                            </label>
+                        </div>
+                        <div class="file-info">Max file size: 2MB</div>
+                        <span id="icCopyError" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="certificates">Grooming Certificates (if any)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="certificates" id="certificates" accept=".pdf,.jpg,.jpeg,.png" multiple
+                                   onchange="validateFiles(this, 'certificatesError', 5)">
+                            <label for="certificates" class="file-upload-label">
+                                <span class="file-upload-text">Choose files</span>
+                                <span class="file-upload-button">Browse</span>
+                            </label>
+                        </div>
+                        <div class="file-info">You can select multiple files (5MB each)</div>
+                        <span id="certificatesError" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="portfolio">Grooming Portfolio (Photos)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple
+                                   onchange="validateFiles(this, 'portfolioError', 5)">
+                            <label for="portfolio" class="file-upload-label">
+                                <span class="file-upload-text">Choose photos</span>
+                                <span class="file-upload-button">Browse</span>
+                            </label>
+                        </div>
+                        <div class="file-info">Show us your best work (5MB each)</div>
+                        <span id="portfolioError" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Documents Given (Tick all received)</label>
+                        <div class="document-checklist">
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_nda" id="doc_nda">
+                                <label for="doc_nda">NDA</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
+                                <label for="doc_offer_letter">Offer Letter</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_resume" id="doc_resume">
+                                <label for="doc_resume">Resume</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
+                                <label for="doc_candidate_form">Candidate Form</label>
+                            </div>
+                            <div class="document-item">
+                                <input type="checkbox" name="doc_ic" id="doc_ic">
+                                <label for="doc_ic">IC Copy</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="document-item">
-                    <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
-                    <label for="doc_offer_letter">Offer Letter</label>
-                </div>
-                <div class="document-item">
-                    <input type="checkbox" name="doc_resume" id="doc_resume">
-                    <label for="doc_resume">Resume</label>
-                </div>
-                <div class="document-item">
-                    <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
-                    <label for="doc_candidate_form">Candidate Form</label>
-                </div>
-                <div class="document-item">
-                    <input type="checkbox" name="doc_ic" id="doc_ic">
-                    <label for="doc_ic">IC Copy</label>
-                </div>
             </div>
-        </div>
+            
+            <div class="form-group full-width" style="text-align: center;">
+                <button type="submit" class="btn-submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.2rem; height: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                    Submit Application
+                </button>
+            </div>
+        </form>
     </div>
-</div>
 
-<div class="form-group full-width" style="text-align: center;">
-    <button type="submit" class="btn-submit" onclick="validateForm()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.2rem; height: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-        </svg>
-        Submit Application
-    </button>
-</div>
-
-<style>
-/* File Upload Styling */
-.file-upload-wrapper {
-    position: relative;
-    margin-bottom: 5px;
-}
-.file-upload-label {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 8px 12px;
-    background: #f9f9f9;
-    cursor: pointer;
-}
-.file-upload-text {
-    flex-grow: 1;
-    color: #666;
-}
-.file-upload-button {
-    background: #3498db;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.9em;
-}
-input[type="file"] {
-    position: absolute;
-    left: -9999px;
-}
-.file-info {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 4px;
-}
-
-/* Document Checklist */
-.document-checklist {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
-}
-.document-item {
-    display: flex;
-    align-items: center;
-}
-.document-item input {
-    margin-right: 8px;
-}
-
-/* Error Styling */
-.error-message {
-    color: #dc3545;
-    font-size: 0.875em;
-    margin-top: 0.25rem;
-    display: block;
-}
-
-/* Submit Button */
-.btn-submit {
-    background: #28a745;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.btn-submit:hover {
-    background: #218838;
-}
-</style>
-
-<script>
-function validateFile(input, errorElementId, maxSizeMB) {
-    const errorElement = document.getElementById(errorElementId);
-    errorElement.textContent = '';
-    
-    if (input.files.length > 0) {
-        const file = input.files[0];
-        const validTypes = input.accept.split(',');
-        const fileType = '.' + file.name.split('.').pop().toLowerCase();
-        
-        // Validate file type
-        if (!validTypes.includes(fileType)) {
-            errorElement.textContent = `Invalid file type. Allowed: ${validTypes.join(', ')}`;
-            input.value = '';
-            return false;
-        }
-        
-        // Validate file size
-        if (file.size > maxSizeMB * 1024 * 1024) {
-            errorElement.textContent = `File too large (max ${maxSizeMB}MB)`;
-            input.value = '';
-            return false;
-        }
-        
-        // Update UI with selected file name
-        const label = input.nextElementSibling;
-        const textSpan = label.querySelector('.file-upload-text');
-        textSpan.textContent = file.name;
-        textSpan.style.color = '#333';
-    }
-    
-    return true;
-}
-
-function validateFiles(input, errorElementId, maxSizeMB) {
-    const errorElement = document.getElementById(errorElementId);
-    errorElement.textContent = '';
-    
-    if (input.files.length > 0) {
-        const validTypes = input.accept.split(',');
-        
-        for (let i = 0; i < input.files.length; i++) {
-            const file = input.files[i];
-            const fileType = '.' + file.name.split('.').pop().toLowerCase();
-            
-            // Validate file type
-            if (!validTypes.includes(fileType)) {
-                errorElement.textContent = `Invalid file type in ${file.name}. Allowed: ${validTypes.join(', ')}`;
-                input.value = '';
-                return false;
-            }
-            
-            // Validate file size
-            if (file.size > maxSizeMB * 1024 * 1024) {
-                errorElement.textContent = `${file.name} is too large (max ${maxSizeMB}MB)`;
-                input.value = '';
-                return false;
-            }
-        }
-        
-        // Update UI with selected files count
-        const label = input.nextElementSibling;
-        const textSpan = label.querySelector('.file-upload-text');
-        textSpan.textContent = `${input.files.length} file(s) selected`;
-        textSpan.style.color = '#333';
-    }
-    
-    return true;
-}
-
-function validateForm() {
-    let isValid = true;
-    
-    // Validate required resume
-    const resumeInput = document.getElementById('resume');
-    if (resumeInput.files.length === 0) {
-        document.getElementById('resumeError').textContent = 'Please upload a resume file';
-        isValid = false;
-    } else if (!validateFile(resumeInput, 'resumeError', 5)) {
-        isValid = false;
-    }
-    
-    // Validate other files if uploaded
-    const icCopyInput = document.getElementById('ic_copy');
-    if (icCopyInput.files.length > 0 && !validateFile(icCopyInput, 'icCopyError', 2)) {
-        isValid = false;
-    }
-    
-    const certificatesInput = document.getElementById('certificates');
-    if (certificatesInput.files.length > 0 && !validateFiles(certificatesInput, 'certificatesError', 5)) {
-        isValid = false;
-    }
-    
-    const portfolioInput = document.getElementById('portfolio');
-    if (portfolioInput.files.length > 0 && !validateFiles(portfolioInput, 'portfolioError', 5)) {
-        isValid = false;
-    }
-    
-    if (!isValid) {
-        event.preventDefault();
-        alert('Please correct the errors before submitting');
-    }
-    
-    return isValid;
-}
-</script>
+    <script>
         // Status reason configuration
         const statusReasons = {
             'KIV': [
@@ -862,55 +739,114 @@ function validateForm() {
             ]
         };
 
+        // Validate name field
+        function validateName() {
+            const nameInput = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            const nameRegex = /^[A-Za-z\s]{3,}$/;
+            
+            if (!nameRegex.test(nameInput.value)) {
+                nameError.style.display = 'block';
+                nameInput.setCustomValidity('Invalid name format');
+                return false;
+            } else {
+                nameError.style.display = 'none';
+                nameInput.setCustomValidity('');
+                return true;
+            }
+        }
+
         // Process IC number to detect gender and calculate age
         function processICNumber(icNumber) {
             const genderDisplay = document.getElementById('genderDisplay');
             const ageInput = document.getElementById('age');
             const ageDisplay = document.getElementById('ageDisplay');
+            const icError = document.getElementById('icError');
             
-            if (icNumber.length === 12 && /^\d+$/.test(icNumber)) {
-                // Detect gender from last digit (odd = male, even = female)
-                const lastDigit = parseInt(icNumber.slice(-1));
-                const isMale = lastDigit % 2 !== 0;
-                
-                genderDisplay.style.display = 'block';
-                genderDisplay.textContent = isMale ? 'Male' : 'Female';
-                genderDisplay.className = isMale ? 'gender-indicator gender-male' : 'gender-indicator gender-female';
-                
-                // Calculate age from birth date (first 6 digits: YYMMDD)
+            // Remove any non-digit characters
+            icNumber = icNumber.replace(/\D/g, '');
+            
+            // Validate length
+            if (icNumber.length !== 12) {
+                icError.style.display = 'block';
+                genderDisplay.style.display = 'none';
+                ageInput.value = '';
+                return;
+            }
+            
+            icError.style.display = 'none';
+            
+            try {
+                // Extract birth date (YYMMDD format)
                 const birthYear = parseInt(icNumber.substring(0, 2));
-                const birthMonth = parseInt(icNumber.substring(2, 4)) - 1; // Months are 0-indexed
+                const birthMonth = parseInt(icNumber.substring(2, 4)) - 1; // JS months are 0-11
                 const birthDay = parseInt(icNumber.substring(4, 6));
                 
-                // Handle year (00-21 is 2000-2021, 22-99 is 1922-1999)
-                const currentYear = new Date().getFullYear();
-                const fullBirthYear = birthYear <= (currentYear % 100) ? 2000 + birthYear : 1900 + birthYear;
+                // Determine century (00-21: 2000-2021, 22-99: 1922-1999)
+                const currentYearLastTwoDigits = new Date().getFullYear() % 100;
+                const fullBirthYear = (birthYear <= currentYearLastTwoDigits) ? 
+                    2000 + birthYear : 1900 + birthYear;
                 
+                // Calculate age
                 const birthDate = new Date(fullBirthYear, birthMonth, birthDay);
-                const today = new Date();
+                const ageDiffMs = Date.now() - birthDate.getTime();
+                const ageDate = new Date(ageDiffMs);
+                const age = Math.abs(ageDate.getUTCFullYear() - 1970);
                 
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                
-                // Update age field
-                ageInput.value = age;
-                ageDisplay.textContent = age + ' years old';
-                ageDisplay.style.display = 'block';
-                
-                // Validate age
-                if (age < 18 || age > 70) {
-                    document.getElementById('ageError').style.display = 'block';
-                } else {
+                // Validate age range
+                if (age >= 18 && age <= 70) {
+                    ageInput.value = age;
                     document.getElementById('ageError').style.display = 'none';
+                } else {
+                    document.getElementById('ageError').style.display = 'block';
                 }
+                
+                // Determine gender (last digit: odd=male, even=female)
+                const lastDigit = parseInt(icNumber.charAt(11));
+                if (lastDigit % 2 === 1) {
+                    genderDisplay.textContent = 'Male';
+                    genderDisplay.className = 'gender-indicator gender-male';
+                } else {
+                    genderDisplay.textContent = 'Female';
+                    genderDisplay.className = 'gender-indicator gender-female';
+                }
+                genderDisplay.style.display = 'inline-block';
+                
+            } catch (e) {
+                console.error("Error processing IC number:", e);
+                icError.style.display = 'block';
+            }
+        }
+
+        // Validate IC number
+        function validateICNumber() {
+            const icInput = document.getElementById('ic');
+            if (!icInput.checkValidity()) {
+                document.getElementById('icError').style.display = 'block';
+            }
+        }
+
+        // Validate phone number
+        function validatePhoneNumber() {
+            const phoneInput = document.getElementById('phone_number');
+            const phoneError = document.getElementById('phoneNumberError');
+            
+            if (phoneInput.value && !phoneInput.checkValidity()) {
+                phoneError.style.display = 'block';
             } else {
-                genderDisplay.style.display = 'none';
-                ageDisplay.textContent = 'Age will auto-calculate';
-                ageInput.value = '';
+                phoneError.style.display = 'none';
+            }
+        }
+
+        // Validate email
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            
+            if (emailInput.value && !emailInput.checkValidity()) {
+                emailError.style.display = 'block';
+            } else {
+                emailError.style.display = 'none';
             }
         }
         
@@ -919,8 +855,8 @@ function validateForm() {
             const branch = document.getElementById('branch').value;
             const hostelGroup = document.getElementById('hostel-group');
             
-            // Only show hostel for Damansara (DP), Bangi (BG), and Wangsa Maju (WM)
-            if (['DP', 'BG', 'WM'].includes(branch)) {
+            // Only show hostel for branches that offer it
+            if (['DP', 'BG', 'WM', 'JB'].includes(branch)) {
                 hostelGroup.classList.remove('hidden');
             } else {
                 hostelGroup.classList.add('hidden');
@@ -964,98 +900,152 @@ function validateForm() {
             }
         });
 
-        // Form validation
-        const form = document.getElementById('candidateForm');
-        
-        function validateForm(event) {
+        // File validation functions
+        function validateFile(input, errorElementId, maxSizeMB) {
+            const errorElement = document.getElementById(errorElementId);
+            errorElement.textContent = '';
+            
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const validTypes = input.accept.split(',');
+                const fileType = '.' + file.name.split('.').pop().toLowerCase();
+                
+                // Validate file type
+                if (!validTypes.includes(fileType)) {
+                    errorElement.textContent = `Invalid file type. Allowed: ${validTypes.join(', ')}`;
+                    input.value = '';
+                    return false;
+                }
+                
+                // Validate file size
+                if (file.size > maxSizeMB * 1024 * 1024) {
+                    errorElement.textContent = `File too large (max ${maxSizeMB}MB)`;
+                    input.value = '';
+                    return false;
+                }
+                
+                // Update UI with selected file name
+                const label = input.nextElementSibling;
+                const textSpan = label.querySelector('.file-upload-text');
+                textSpan.textContent = file.name;
+                textSpan.style.color = '#333';
+            }
+            
+            return true;
+        }
+
+        function validateFiles(input, errorElementId, maxSizeMB) {
+            const errorElement = document.getElementById(errorElementId);
+            errorElement.textContent = '';
+            
+            if (input.files.length > 0) {
+                const validTypes = input.accept.split(',');
+                
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const fileType = '.' + file.name.split('.').pop().toLowerCase();
+                    
+                    // Validate file type
+                    if (!validTypes.includes(fileType)) {
+                        errorElement.textContent = `Invalid file type in ${file.name}. Allowed: ${validTypes.join(', ')}`;
+                        input.value = '';
+                        return false;
+                    }
+                    
+                    // Validate file size
+                    if (file.size > maxSizeMB * 1024 * 1024) {
+                        errorElement.textContent = `${file.name} is too large (max ${maxSizeMB}MB)`;
+                        input.value = '';
+                        return false;
+                    }
+                }
+                
+                // Update UI with selected files count
+                const label = input.nextElementSibling;
+                const textSpan = label.querySelector('.file-upload-text');
+                textSpan.textContent = `${input.files.length} file(s) selected`;
+                textSpan.style.color = '#333';
+            }
+            
+            return true;
+        }
+
+        // Form submission validation
+        document.getElementById('candidateForm').addEventListener('submit', function(e) {
             let isValid = true;
             
-            // Reset errors
-            document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
-            
-            // Name validation
-            if (document.getElementById('name').value.trim() === '') {
-                document.getElementById('nameError').style.display = 'block';
+            // Validate name
+            if (!validateName()) {
                 isValid = false;
             }
             
-            // IC validation
-            if (!/^\d{12}$/.test(document.getElementById('ic').value)) {
+            // Validate IC number
+            const icInput = document.getElementById('ic');
+            if (!icInput.checkValidity()) {
                 document.getElementById('icError').style.display = 'block';
                 isValid = false;
             }
             
-            // Phone Number validation
-            if (!/^\d{10,11}$/.test(document.getElementById('phone_number').value)) {
+            // Validate phone number
+            const phoneInput = document.getElementById('phone_number');
+            if (!phoneInput.checkValidity()) {
                 document.getElementById('phoneNumberError').style.display = 'block';
                 isValid = false;
             }
             
-            // Email validation
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value)) {
+            // Validate email
+            const emailInput = document.getElementById('email');
+            if (!emailInput.checkValidity()) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
             }
-
-            // Resume validation
-            const resume = document.getElementById('resume');
-            if (!resume.files.length) {
-                document.getElementById('resumeError').style.display = 'block';
-                isValid = false;
-            } else {
-                const file = resume.files[0];
-                const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                
-                if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx)$/i)) {
-                    document.getElementById('resumeError').textContent = 'Please upload a PDF, DOC or DOCX file';
-                    document.getElementById('resumeError').style.display = 'block';
-                    isValid = false;
-                } else if (file.size > maxSize) {
-                    document.getElementById('resumeError').textContent = 'File size exceeds 5MB limit';
-                    document.getElementById('resumeError').style.display = 'block';
-                    isValid = false;
-                }
-            }
             
-            // Age validation (from IC)
+            // Validate age
             const age = parseInt(document.getElementById('age').value);
-            if (age < 18 || age > 70) {
+            if (isNaN(age) || age < 18 || age > 70) {
                 document.getElementById('ageError').style.display = 'block';
                 isValid = false;
             }
 
+            // Validate required resume
+            const resumeInput = document.getElementById('resume');
+            if (resumeInput.files.length === 0) {
+                document.getElementById('resumeError').textContent = 'Please upload a resume file';
+                document.getElementById('resumeError').style.display = 'block';
+                isValid = false;
+            } else if (!validateFile(resumeInput, 'resumeError', 5)) {
+                isValid = false;
+            }
+            
+            // Validate other files if uploaded
+            const icCopyInput = document.getElementById('ic_copy');
+            if (icCopyInput.files.length > 0 && !validateFile(icCopyInput, 'icCopyError', 2)) {
+                isValid = false;
+            }
+            
+            const certificatesInput = document.getElementById('certificates');
+            if (certificatesInput.files.length > 0 && !validateFiles(certificatesInput, 'certificatesError', 5)) {
+                isValid = false;
+            }
+            
+            const portfolioInput = document.getElementById('portfolio');
+            if (portfolioInput.files.length > 0 && !validateFiles(portfolioInput, 'portfolioError', 5)) {
+                isValid = false;
+            }
+            
             if (!isValid) {
-                event.preventDefault();
+                e.preventDefault();
                 // Scroll to first error
-                const firstError = form.querySelector('.error[style="display: block;"]');
+                const firstError = document.querySelector('.error-message[style="display: block;"]');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
-        }
-        
-        form.addEventListener('submit', validateForm);
+        });
 
-        // Real-time validation
-        document.getElementById('name').addEventListener('input', function() {
-            if (this.value.trim() !== '') document.getElementById('nameError').style.display = 'none';
-        });
-        
-        document.getElementById('ic').addEventListener('input', function() {
-            if (/^\d{12}$/.test(this.value)) document.getElementById('icError').style.display = 'none';
-        });
-        
-        document.getElementById('phone_number').addEventListener('input', function() {
-            if (/^\d{10,11}$/.test(this.value)) document.getElementById('phoneNumberError').style.display = 'none';
-        });
-        
-        document.getElementById('email').addEventListener('input', function() {
-            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)) document.getElementById('emailError').style.display = 'none';
-        });
-        
-        document.getElementById('resume').addEventListener('change', function() {
-            if (this.files.length) document.getElementById('resumeError').style.display = 'none';
+        // Initialize form
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleHostelField();
         });
     </script>
 </body>
