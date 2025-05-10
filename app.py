@@ -122,27 +122,81 @@ def dashboard():
 @app.route('/add_candidate', methods=['GET', 'POST'])
 @login_required
 def add_candidate():
-    if current_user.role == 'HR':
-        if request.method == 'POST':
-            # ... (your existing add candidate code)
-            status = request.form.get('status', 'New Application')
-            status_reason = request.form.get('status_reason', None)
+    if current_user.role != 'HR':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        try:
+            # Get all form data with defaults for optional fields
+            name = request.form.get('name', '').strip()
+            age = int(request.form.get('age', 0))
+            position = request.form.get('position', '').strip()
+            branch = request.form.get('branch', 'HQ').strip()
+            phone_number = request.form.get('phone_number', '').strip()
+            email = request.form.get('email', '').strip().lower()
+            status = request.form.get('status', 'New Application').strip()
             
+            # Handle file uploads
+            resume_url = request.form.get('resume_url', '').strip()
+            offer_letter = request.form.get('offer_letter', '').strip()
+            ic = request.form.get('ic', '').strip()
+            candidate_form = request.form.get('candidate_form', '').strip()
+            nda = request.form.get('nda', '').strip()
+            
+            # Handle dates
+            date_iv = request.form.get('date_iv')
+            date_training = request.form.get('date_training')
+            
+            # Convert dates from string to date objects
+            date_iv = datetime.strptime(date_iv, '%Y-%m-%d').date() if date_iv else None
+            date_training = datetime.strptime(date_training, '%Y-%m-%d').date() if date_training else None
+            
+            # Determine hostel requirement
+            hostel_required = branch in ['JB', 'DP', 'SA']
+            
+            # Handle status reason
+            status_reason = request.form.get('status_reason', '').strip()
+            if status not in ['Rejected', 'KIV', 'Withdraw']:
+                status_reason = None
+            
+            # Create new candidate
             new_candidate = Candidate(
-                # ... (your existing fields)
+                name=name,
+                age=age,
+                position=position,
+                branch=branch,
+                phone_number=phone_number,
+                email=email,
+                resume_url=resume_url,
                 status=status,
-                status_reason=status_reason if status in ['Rejected', 'KIV', 'Withdraw'] else None,
-                # ... (other fields)
+                status_reason=status_reason,
+                date_iv=date_iv,
+                date_training=date_training,
+                offer_letter=offer_letter,
+                ic=ic,
+                candidate_form=candidate_form,
+                nda=nda,
+                hostel_required=hostel_required
             )
+            
             db.session.add(new_candidate)
             db.session.commit()
-            flash('Candidate added successfully!')
+            
+            flash('Candidate added successfully!', 'success')
             return redirect(url_for('dashboard'))
-        
-        return render_template('add_candidate.html')
-    else:
-        flash('Access denied.')
-        return redirect(url_for('login'))
+            
+        except ValueError as e:
+            db.session.rollback()
+            flash(f'Invalid data format: {str(e)}', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding candidate: {str(e)}', 'danger')
+    
+    # For GET request or if POST fails
+    return render_template('add_candidate.html')
+
+
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
     if request.method == 'POST':
