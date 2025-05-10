@@ -36,7 +36,7 @@ class Candidate(db.Model):
     resume_url = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(50), nullable=False, default='New Application')
     status_reason = db.Column(db.String(500), nullable=True)
-    date_iv = db.Column(db.Date, nullable=True)
+    date_iv = db.Column(db.DateTime, nullable=True)
     date_training = db.Column(db.Date, nullable=True)
     offer_letter = db.Column(db.String(150), nullable=True)
     ic = db.Column(db.String(150), nullable=True)
@@ -96,7 +96,7 @@ def dashboard():
         today = datetime.today().date()
         today_interviews = Candidate.query.filter(
             Candidate.status == 'Interview Scheduled',
-            Candidate.date_iv == today  # Note: field is 'date_iv' not 'interview_date'
+            func.date(Candidate.date_iv) == today
         ).all()
 
         # Get status counts
@@ -105,29 +105,26 @@ def dashboard():
             Candidate.status,
             func.count(Candidate.id)
         ).group_by(Candidate.status).all()
-
+        
         for status, count in counts:
             status_counts[status] = count
-
+        
         # Ensure all statuses are represented
         for status in all_statuses:
             if status not in status_counts:
                 status_counts[status] = 0
-
+        
         candidates = Candidate.query.order_by(Candidate.date_created.desc()).all()
-
-        return render_template(
-            'dashboard.html',
-            user=current_user,
-            candidates=candidates,
-            status_counts=dict(status_counts),
-            today_interviews=today_interviews,
-            current_date=datetime.now().strftime('%Y-%m-%d')
-        )
+        
+        return render_template('dashboard.html',
+                           user=current_user,
+                           candidates=candidates,
+                           status_counts=dict(status_counts),
+                           current_date=datetime.now().strftime('%Y-%m-%d'),
+                           today_interviews=today_interviews)
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
-
 
 @app.route('/schedule_interview', methods=['POST'])
 def schedule_interview():
@@ -167,8 +164,6 @@ def bulk_schedule_interviews():
     db.session.commit()
     flash(f'Scheduled {len(candidate_ids)} interviews', 'success')
     return redirect(url_for('dashboard'))
-
-
 
 @app.route('/add_candidate', methods=['GET', 'POST'])
 @login_required
@@ -247,7 +242,6 @@ def add_candidate():
     # For GET request or if POST fails
     return render_template('add_candidate.html')
 
-
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
     if request.method == 'POST':
@@ -292,8 +286,6 @@ def apply():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in {'pdf', 'doc', 'docx'}
-
-
 
 @app.route('/update_status/<int:candidate_id>', methods=['POST'])
 @login_required
