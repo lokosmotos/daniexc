@@ -130,8 +130,8 @@ def dashboard():
         flash('Access denied.')
         return redirect(url_for('login'))
         
-@login_required
 @app.route('/schedule_interview', methods=['POST'])
+@login_required
 def schedule_interview():
     candidate_id = request.form.get('candidate_id')
     interview_date = request.form.get('interview_date')
