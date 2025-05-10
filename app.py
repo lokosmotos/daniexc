@@ -278,14 +278,25 @@ def apply():
             
             db.session.add(new_candidate)
             db.session.commit()
-            flash('Application submitted successfully!', 'success')
-            return redirect(url_for('apply'))
             
+            flash_message = Markup(
+                f'Candidate {name} added successfully! '
+                f'<a href="{url_for("view_candidate", candidate_id=new_candidate.id)}" class="alert-link">View</a> | '
+                f'<a href="{url_for("dashboard")}" class="alert-link">Dashboard</a> | '
+                f'<a href="{url_for("add_candidate")}" class="alert-link">Add Another</a>'
+            )
+            flash(flash_message, 'success')
+            
+            return redirect(url_for('add_candidate'))  # Stay on add page to add more
+            
+        except ValueError as e:
+            db.session.rollback()
+            flash(f'Invalid data format: {str(e)}', 'danger')
         except Exception as e:
             db.session.rollback()
-            flash(f'Error submitting application: {str(e)}', 'danger')
+            flash(f'Error adding candidate: {str(e)}', 'danger')
     
-    return render_template('apply.html')
+    return render_template('add_candidate.html')
 
 def allowed_file(filename):
     return '.' in filename and \
