@@ -7,53 +7,60 @@
     <style>
         /* Previous styles remain the same */
         
-        /* Add these new styles */
-        .interview-section {
-            margin-top: 30px;
-            background: #e8f4fc;
-            padding: 15px;
-            border-radius: 8px;
+        /* New styles for interview scheduling */
+        .interview-info {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        .interview-date {
+            font-weight: bold;
+            color: #e67e22;
         }
         .today-interviews {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
         .interview-card {
             background: white;
-            padding: 15px;
+            padding: 12px;
+            margin: 8px 0;
             border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .interview-time {
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .interview-candidate {
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-        .interview-position {
-            font-size: 14px;
-            color: #555;
         }
         .interview-actions {
-            margin-top: 10px;
+            margin-top: 8px;
+        }
+        .interview-actions a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 10px;
+            font-size: 12px;
         }
         .date-picker {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-        }
-        .status-pool {
-            position: relative;
+            width: 100%;
+            box-sizing: border-box;
         }
         .pool-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .bulk-action {
+            font-size: 12px;
+            color: #3498db;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -71,37 +78,33 @@
         {% endwith %}
         
         <!-- Today's Interviews Section -->
-        <div class="interview-section">
+        <div class="today-interviews">
             <h2>Today's Interviews ({{ today_interviews|length }})</h2>
             {% if today_interviews %}
-            <div class="today-interviews">
                 {% for candidate in today_interviews %}
                 <div class="interview-card">
-                    <div class="interview-time">
-                        {{ candidate.date_iv.strftime('%I:%M %p') if candidate.date_iv else 'Time not set' }}
+                    <div class="interview-time">{{ candidate.date_iv.strftime('%I:%M %p') }}</div>
+                    <div class="candidate-name">{{ candidate.name }}</div>
+                    <div class="candidate-details">
+                        {{ candidate.position }} | {{ candidate.branch }}
                     </div>
-                    <div class="interview-candidate">{{ candidate.name }}</div>
-                    <div class="interview-position">{{ candidate.position }} - {{ candidate.branch }}</div>
                     <div class="interview-actions">
                         <a href="#" onclick="openInterviewModal('{{ candidate.id }}')">Reschedule</a>
                         <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View Profile</a>
                     </div>
                 </div>
                 {% endfor %}
-            </div>
             {% else %}
-            <p>No interviews scheduled for today.</p>
+                <p>No interviews scheduled for today.</p>
             {% endif %}
         </div>
-
-        <!-- Quick Actions -->
+        
         <div class="card">
             <h2>Quick Actions</h2>
             <a href="{{ url_for('add_candidate') }}" class="btn">Add New Candidate</a>
-            <a href="{{ url_for('schedule_interviews') }}" class="btn">Schedule Interviews</a>
+            <a href="#" onclick="openBulkScheduleModal()" class="btn">Bulk Schedule Interviews</a>
         </div>
         
-        <!-- Status Pools (existing code remains the same) -->
         <div class="card">
             <h2>Candidates by Status</h2>
             <div class="status-pools">
@@ -109,22 +112,24 @@
                 <div class="status-pool status-Interview-Scheduled">
                     <div class="pool-header">
                         <h3>Interview Scheduled <span class="status-badge">{{ status_counts.get('Interview Scheduled', 0) }}</span></h3>
-                        <a href="#" onclick="openBulkScheduleModal()" style="font-size: 12px;">Bulk Schedule</a>
+                        <span class="bulk-action" onclick="openBulkScheduleModal()">Bulk Schedule</span>
                     </div>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Interview Scheduled' %}
                         <div class="candidate-card">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
-                                {{ candidate.position }}<br>
-                                {{ candidate.branch }}<br>
-                                <strong>Interview:</strong> 
-                                {% if candidate.date_iv %}
-                                    {{ candidate.date_iv.strftime('%Y-%m-%d %I:%M %p') }}
-                                {% else %}
-                                    Not scheduled
-                                {% endif %}
+                                {{ candidate.position }} | {{ candidate.branch }}
                             </div>
+                            {% if candidate.date_iv %}
+                            <div class="interview-info">
+                                Scheduled: <span class="interview-date">{{ candidate.date_iv.strftime('%Y-%m-%d %I:%M %p') }}</span>
+                            </div>
+                            {% else %}
+                            <div class="interview-info">
+                                Not yet scheduled
+                            </div>
+                            {% endif %}
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openInterviewModal('{{ candidate.id }}')">
                                     {{ 'Reschedule' if candidate.date_iv else 'Schedule' }}
@@ -162,7 +167,7 @@
                     <input type="time" id="interviewTime" name="interview_time" class="date-picker" required>
                 </div>
                 <div class="form-group">
-                    <label for="interviewNotes">Notes</label>
+                    <label for="interviewNotes">Notes (Optional)</label>
                     <textarea id="interviewNotes" name="interview_notes" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn">Schedule Interview</button>
@@ -185,7 +190,7 @@
                     <input type="time" id="bulkInterviewTime" name="interview_time" class="date-picker" required>
                 </div>
                 <div class="form-group">
-                    <label>Candidates to Schedule</label>
+                    <label>Select Candidates</label>
                     {% for candidate in candidates if candidate.status == 'Interview Scheduled' and not candidate.date_iv %}
                     <div style="margin: 5px 0;">
                         <input type="checkbox" name="candidate_ids" value="{{ candidate.id }}" id="candidate_{{ candidate.id }}">
