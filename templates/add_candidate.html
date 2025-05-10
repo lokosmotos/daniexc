@@ -542,79 +542,288 @@
             </div>
             
             <!-- Documents Section -->
-            <div class="form-section">
-                <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Documents
-                </h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="resume" class="required">Resume (PDF, DOCX, DOC)</label>
-                        <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
-                        <div class="file-info">Max file size: 5MB</div>
-                        <span id="resumeError" class="error">Please upload a resume file</span>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="ic_copy">IC Copy (PDF, JPG, PNG)</label>
-                        <input type="file" name="ic_copy" id="ic_copy" accept=".pdf,.jpg,.jpeg,.png">
-                        <div class="file-info">Max file size: 2MB</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="certificates">Grooming Certificates (if any)</label>
-                        <input type="file" name="certificates" id="certificates" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                        <div class="file-info">You can select multiple files</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="portfolio">Grooming Portfolio (Photos)</label>
-                        <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple>
-                        <div class="file-info">Show us your best work</div>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label>Documents Given (Tick all received)</label>
-                        <div class="document-checklist">
-                            <div class="document-item">
-                                <input type="checkbox" name="doc_nda" id="doc_nda">
-                                <label for="doc_nda">NDA</label>
-                            </div>
-                            <div class="document-item">
-                                <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
-                                <label for="doc_offer_letter">Offer Letter</label>
-                            </div>
-                            <div class="document-item">
-                                <input type="checkbox" name="doc_resume" id="doc_resume">
-                                <label for="doc_resume">Resume</label>
-                            </div>
-                            <div class="document-item">
-                                <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
-                                <label for="doc_candidate_form">Candidate Form</label>
-                            </div>
-                            <div class="document-item">
-                                <input type="checkbox" name="doc_ic" id="doc_ic">
-                                <label for="doc_ic">IC Copy</label>
-                            </div>
-                        </div>
-                    </div>
+<div class="form-section">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Documents
+    </h2>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="resume" class="required">Resume (PDF, DOCX, DOC)</label>
+            <div class="file-upload-wrapper">
+                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required
+                       onchange="validateFile(this, 'resumeError', 5)">
+                <label for="resume" class="file-upload-label">
+                    <span class="file-upload-text">Choose file</span>
+                    <span class="file-upload-button">Browse</span>
+                </label>
+            </div>
+            <div class="file-info">Max file size: 5MB</div>
+            <span id="resumeError" class="error-message"></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="ic_copy">IC Copy (PDF, JPG, PNG)</label>
+            <div class="file-upload-wrapper">
+                <input type="file" name="ic_copy" id="ic_copy" accept=".pdf,.jpg,.jpeg,.png"
+                       onchange="validateFile(this, 'icCopyError', 2)">
+                <label for="ic_copy" class="file-upload-label">
+                    <span class="file-upload-text">Choose file</span>
+                    <span class="file-upload-button">Browse</span>
+                </label>
+            </div>
+            <div class="file-info">Max file size: 2MB</div>
+            <span id="icCopyError" class="error-message"></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="certificates">Grooming Certificates (if any)</label>
+            <div class="file-upload-wrapper">
+                <input type="file" name="certificates" id="certificates" accept=".pdf,.jpg,.jpeg,.png" multiple
+                       onchange="validateFiles(this, 'certificatesError', 5)">
+                <label for="certificates" class="file-upload-label">
+                    <span class="file-upload-text">Choose files</span>
+                    <span class="file-upload-button">Browse</span>
+                </label>
+            </div>
+            <div class="file-info">You can select multiple files (5MB each)</div>
+            <span id="certificatesError" class="error-message"></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="portfolio">Grooming Portfolio (Photos)</label>
+            <div class="file-upload-wrapper">
+                <input type="file" name="portfolio" id="portfolio" accept=".jpg,.jpeg,.png" multiple
+                       onchange="validateFiles(this, 'portfolioError', 5)">
+                <label for="portfolio" class="file-upload-label">
+                    <span class="file-upload-text">Choose photos</span>
+                    <span class="file-upload-button">Browse</span>
+                </label>
+            </div>
+            <div class="file-info">Show us your best work (5MB each)</div>
+            <span id="portfolioError" class="error-message"></span>
+        </div>
+        
+        <div class="form-group full-width">
+            <label>Documents Given (Tick all received)</label>
+            <div class="document-checklist">
+                <div class="document-item">
+                    <input type="checkbox" name="doc_nda" id="doc_nda">
+                    <label for="doc_nda">NDA</label>
+                </div>
+                <div class="document-item">
+                    <input type="checkbox" name="doc_offer_letter" id="doc_offer_letter">
+                    <label for="doc_offer_letter">Offer Letter</label>
+                </div>
+                <div class="document-item">
+                    <input type="checkbox" name="doc_resume" id="doc_resume">
+                    <label for="doc_resume">Resume</label>
+                </div>
+                <div class="document-item">
+                    <input type="checkbox" name="doc_candidate_form" id="doc_candidate_form">
+                    <label for="doc_candidate_form">Candidate Form</label>
+                </div>
+                <div class="document-item">
+                    <input type="checkbox" name="doc_ic" id="doc_ic">
+                    <label for="doc_ic">IC Copy</label>
                 </div>
             </div>
-
-            <div class="form-group full-width" style="text-align: center;">
-                <button type="submit" class="btn-submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.2rem; height: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                    </svg>
-                    Submit Application
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
+</div>
 
-    <script>
+<div class="form-group full-width" style="text-align: center;">
+    <button type="submit" class="btn-submit" onclick="validateForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.2rem; height: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+        Submit Application
+    </button>
+</div>
+
+<style>
+/* File Upload Styling */
+.file-upload-wrapper {
+    position: relative;
+    margin-bottom: 5px;
+}
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    cursor: pointer;
+}
+.file-upload-text {
+    flex-grow: 1;
+    color: #666;
+}
+.file-upload-button {
+    background: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+input[type="file"] {
+    position: absolute;
+    left: -9999px;
+}
+.file-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Document Checklist */
+.document-checklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+.document-item {
+    display: flex;
+    align-items: center;
+}
+.document-item input {
+    margin-right: 8px;
+}
+
+/* Error Styling */
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Submit Button */
+.btn-submit {
+    background: #28a745;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.btn-submit:hover {
+    background: #218838;
+}
+</style>
+
+<script>
+function validateFile(input, errorElementId, maxSizeMB) {
+    const errorElement = document.getElementById(errorElementId);
+    errorElement.textContent = '';
+    
+    if (input.files.length > 0) {
+        const file = input.files[0];
+        const validTypes = input.accept.split(',');
+        const fileType = '.' + file.name.split('.').pop().toLowerCase();
+        
+        // Validate file type
+        if (!validTypes.includes(fileType)) {
+            errorElement.textContent = `Invalid file type. Allowed: ${validTypes.join(', ')}`;
+            input.value = '';
+            return false;
+        }
+        
+        // Validate file size
+        if (file.size > maxSizeMB * 1024 * 1024) {
+            errorElement.textContent = `File too large (max ${maxSizeMB}MB)`;
+            input.value = '';
+            return false;
+        }
+        
+        // Update UI with selected file name
+        const label = input.nextElementSibling;
+        const textSpan = label.querySelector('.file-upload-text');
+        textSpan.textContent = file.name;
+        textSpan.style.color = '#333';
+    }
+    
+    return true;
+}
+
+function validateFiles(input, errorElementId, maxSizeMB) {
+    const errorElement = document.getElementById(errorElementId);
+    errorElement.textContent = '';
+    
+    if (input.files.length > 0) {
+        const validTypes = input.accept.split(',');
+        
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const fileType = '.' + file.name.split('.').pop().toLowerCase();
+            
+            // Validate file type
+            if (!validTypes.includes(fileType)) {
+                errorElement.textContent = `Invalid file type in ${file.name}. Allowed: ${validTypes.join(', ')}`;
+                input.value = '';
+                return false;
+            }
+            
+            // Validate file size
+            if (file.size > maxSizeMB * 1024 * 1024) {
+                errorElement.textContent = `${file.name} is too large (max ${maxSizeMB}MB)`;
+                input.value = '';
+                return false;
+            }
+        }
+        
+        // Update UI with selected files count
+        const label = input.nextElementSibling;
+        const textSpan = label.querySelector('.file-upload-text');
+        textSpan.textContent = `${input.files.length} file(s) selected`;
+        textSpan.style.color = '#333';
+    }
+    
+    return true;
+}
+
+function validateForm() {
+    let isValid = true;
+    
+    // Validate required resume
+    const resumeInput = document.getElementById('resume');
+    if (resumeInput.files.length === 0) {
+        document.getElementById('resumeError').textContent = 'Please upload a resume file';
+        isValid = false;
+    } else if (!validateFile(resumeInput, 'resumeError', 5)) {
+        isValid = false;
+    }
+    
+    // Validate other files if uploaded
+    const icCopyInput = document.getElementById('ic_copy');
+    if (icCopyInput.files.length > 0 && !validateFile(icCopyInput, 'icCopyError', 2)) {
+        isValid = false;
+    }
+    
+    const certificatesInput = document.getElementById('certificates');
+    if (certificatesInput.files.length > 0 && !validateFiles(certificatesInput, 'certificatesError', 5)) {
+        isValid = false;
+    }
+    
+    const portfolioInput = document.getElementById('portfolio');
+    if (portfolioInput.files.length > 0 && !validateFiles(portfolioInput, 'portfolioError', 5)) {
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        event.preventDefault();
+        alert('Please correct the errors before submitting');
+    }
+    
+    return isValid;
+}
+</script>
         // Status reason configuration
         const statusReasons = {
             'KIV': [
