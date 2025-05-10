@@ -3,131 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Candidate | HR System</title>
+    <title>Login | HR System</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
             background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .login-container {
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
         }
         h1 {
             color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            text-align: center;
+            margin-bottom: 30px;
         }
-        .candidate-details {
-            margin-top: 20px;
+        .form-group {
+            margin-bottom: 20px;
         }
-        .detail-row {
-            display: flex;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
-        .detail-label {
-            font-weight: bold;
-            width: 200px;
-            color: #555;
-        }
-        .detail-value {
-            flex: 1;
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         .btn {
-            display: inline-block;
-            background: #3498db;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
             color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 10px 0;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
-        .btn-secondary {
-            background: #95a5a6;
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #a94442;
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Candidate Details</h1>
-        <a href="{{ url_for('dashboard') }}" class="btn">Back to Dashboard</a>
+    <div class="login-container">
+        <h1>HR System Login</h1>
         
-        <div class="candidate-details">
-            <div class="detail-row">
-                <div class="detail-label">Name:</div>
-                <div class="detail-value">{{ candidate.name }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Age:</div>
-                <div class="detail-value">{{ candidate.age }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Position:</div>
-                <div class="detail-value">{{ candidate.position }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Branch:</div>
-                <div class="detail-value">{{ candidate.branch }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Phone Number:</div>
-                <div class="detail-value">{{ candidate.phone_number }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Email:</div>
-                <div class="detail-value">{{ candidate.email }}</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Status:</div>
-                <div class="detail-value">{{ candidate.status }}</div>
-            </div>
-            {% if candidate.status_reason %}
-            <div class="detail-row">
-                <div class="detail-label">Status Reason:</div>
-                <div class="detail-value">{{ candidate.status_reason }}</div>
-            </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
             {% endif %}
-            {% if candidate.resume_url %}
-            <div class="detail-row">
-                <div class="detail-label">Resume:</div>
-                <div class="detail-value"><a href="{{ candidate.resume_url }}" target="_blank">View Resume</a></div>
-            </div>
-            {% endif %}
-            {% if candidate.date_iv %}
-            <div class="detail-row">
-                <div class="detail-label">Interview Date:</div>
-                <div class="detail-value">{{ candidate.date_iv }}</div>
-            </div>
-            {% endif %}
-            {% if candidate.date_training %}
-            <div class="detail-row">
-                <div class="detail-label">Training Date:</div>
-                <div class="detail-value">{{ candidate.date_training }}</div>
-            </div>
-            {% endif %}
-            {% if candidate.offer_letter %}
-            <div class="detail-row">
-                <div class="detail-label">Offer Letter:</div>
-                <div class="detail-value">{{ candidate.offer_letter }}</div>
-            </div>
-            {% endif %}
-            <div class="detail-row">
-                <div class="detail-label">Hostel Required:</div>
-                <div class="detail-value">{{ 'Yes' if candidate.hostel_required else 'No' }}</div>
-            </div>
-        </div>
+        {% endwith %}
         
-        <button class="btn" onclick="window.location='{{ url_for('dashboard') }}'">Back to Dashboard</button>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
     </div>
 </body>
 </html>
