@@ -99,9 +99,6 @@ def dashboard():
             func.date(Candidate.date_iv) == today
         ).all()
 
-        # Get recent candidates (last 5 added)
-        recent_candidates = Candidate.query.order_by(Candidate.date_created.desc()).limit(5).all()
-
         # Get status counts
         status_counts = defaultdict(int)
         counts = db.session.query(
@@ -124,14 +121,12 @@ def dashboard():
                            candidates=candidates,
                            status_counts=dict(status_counts),
                            current_date=datetime.now().strftime('%Y-%m-%d'),
-                           today_interviews=today_interviews,
-                           recent_candidates=recent_candidates)
+                           today_interviews=today_interviews)
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
-        
+
 @app.route('/schedule_interview', methods=['POST'])
-@login_required
 def schedule_interview():
     candidate_id = request.form.get('candidate_id')
     interview_date = request.form.get('interview_date')
@@ -279,26 +274,14 @@ def apply():
             
             db.session.add(new_candidate)
             db.session.commit()
-
-            from flask import Markup
-            flash_message = Markup(
-                f'Candidate {name} added successfully! '
-                f'<a href="{url_for("view_candidate", candidate_id=new_candidate.id)}" class="alert-link">View</a> | '
-                f'<a href="{url_for("dashboard")}" class="alert-link">Dashboard</a> | '
-                f'<a href="{url_for("add_candidate")}" class="alert-link">Add Another</a>'
-            )
-            flash(flash_message, 'success')
+            flash('Application submitted successfully!', 'success')
+            return redirect(url_for('apply'))
             
-            return redirect(url_for('add_candidate'))  # Stay on add page to add more
-            
-        except ValueError as e:
-            db.session.rollback()
-            flash(f'Invalid data format: {str(e)}', 'danger')
         except Exception as e:
             db.session.rollback()
-            flash(f'Error adding candidate: {str(e)}', 'danger')
+            flash(f'Error submitting application: {str(e)}', 'danger')
     
-    return render_template('add_candidate.html')
+    return render_template('apply.html')
 
 def allowed_file(filename):
     return '.' in filename and \
