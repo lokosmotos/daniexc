@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Dashboard | Talent Management System</title>
     <style>
+        /* Your existing CSS styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -45,22 +46,6 @@
         .btn-secondary {
             background: #95a5a6;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-            position: sticky;
-            top: 0;
-        }
-        
-        /* Status Pools */
         .status-pools {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -90,9 +75,9 @@
             font-size: 12px;
             font-weight: bold;
             margin-left: 5px;
+            background: #3498db;
+            color: white;
         }
-        
-        /* Status-specific colors */
         .status-New-Application { border-color: #3498db; }
         .status-Interview-Scheduled { border-color: #f39c12; }
         .status-Practical-Test-Scheduled { border-color: #9b59b6; }
@@ -102,8 +87,6 @@
         .status-Rejected { border-color: #e74c3c; }
         .status-WL { border-color: #95a5a6; }
         .status-Withdraw { border-color: #7f8c8d; }
-        
-        /* Candidate card in pools */
         .candidate-card {
             background: white;
             padding: 12px;
@@ -134,8 +117,6 @@
             text-decoration: none;
             margin-right: 10px;
         }
-        
-        /* Modal for status change */
         .modal {
             display: none;
             position: fixed;
@@ -176,6 +157,17 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
     </style>
 </head>
 <body>
@@ -183,10 +175,17 @@
         <h1>HR Dashboard <span style="float: right; font-size: 14px;">{{ current_date }}</span></h1>
         <p>Welcome, {{ user.username }} ({{ user.role }})</p>
         
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         <div class="card">
             <h2>Quick Actions</h2>
             <a href="{{ url_for('add_candidate') }}" class="btn">Add New Candidate</a>
-            <button class="btn btn-secondary" onclick="document.getElementById('statusModal').style.display='block'">Bulk Status Update</button>
         </div>
         
         <div class="card">
@@ -194,10 +193,10 @@
             <div class="status-pools">
                 <!-- New Applications Pool -->
                 <div class="status-pool status-New-Application">
-                    <h3>New Applications <span class="status-badge">{{ status_counts['New Application'] }}</span></h3>
+                    <h3>New Applications <span class="status-badge">{{ status_counts.get('New Application', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'New Application' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -205,8 +204,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -214,10 +217,10 @@
                 
                 <!-- Interview Scheduled Pool -->
                 <div class="status-pool status-Interview-Scheduled">
-                    <h3>Interview Scheduled <span class="status-badge">{{ status_counts['Interview Scheduled'] }}</span></h3>
+                    <h3>Interview Scheduled <span class="status-badge">{{ status_counts.get('Interview Scheduled', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Interview Scheduled' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -225,8 +228,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -234,10 +241,10 @@
                 
                 <!-- Practical Test Pool -->
                 <div class="status-pool status-Practical-Test-Scheduled">
-                    <h3>Practical Test <span class="status-badge">{{ status_counts['Practical Test Scheduled'] }}</span></h3>
+                    <h3>Practical Test <span class="status-badge">{{ status_counts.get('Practical Test Scheduled', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Practical Test Scheduled' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -245,8 +252,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -254,10 +265,10 @@
                 
                 <!-- Offer Sent Pool -->
                 <div class="status-pool status-Offer-Sent">
-                    <h3>Offer Sent <span class="status-badge">{{ status_counts['Offer Sent'] }}</span></h3>
+                    <h3>Offer Sent <span class="status-badge">{{ status_counts.get('Offer Sent', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Offer Sent' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -265,8 +276,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -274,10 +289,10 @@
                 
                 <!-- Hired Pool -->
                 <div class="status-pool status-Hired">
-                    <h3>Hired <span class="status-badge">{{ status_counts['Hired'] }}</span></h3>
+                    <h3>Hired <span class="status-badge">{{ status_counts.get('Hired', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Hired' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -285,8 +300,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -294,10 +313,10 @@
                 
                 <!-- KIV Pool -->
                 <div class="status-pool status-KIV">
-                    <h3>Keep In View <span class="status-badge">{{ status_counts['KIV'] }}</span></h3>
+                    <h3>Keep In View <span class="status-badge">{{ status_counts.get('KIV', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'KIV' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -308,8 +327,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -317,10 +340,10 @@
                 
                 <!-- Rejected Pool -->
                 <div class="status-pool status-Rejected">
-                    <h3>Rejected <span class="status-badge">{{ status_counts['Rejected'] }}</span></h3>
+                    <h3>Rejected <span class="status-badge">{{ status_counts.get('Rejected', 0) }}</span></h3>
                     <div class="pool-content">
                         {% for candidate in candidates if candidate.status == 'Rejected' %}
-                        <div class="candidate-card" onclick="openCandidateModal('{{ candidate.id }}')">
+                        <div class="candidate-card" onclick="window.location='{{ url_for('view_candidate', candidate_id=candidate.id) }}'">
                             <div class="candidate-name">{{ candidate.name }}</div>
                             <div class="candidate-details">
                                 {{ candidate.position }}<br>
@@ -331,8 +354,12 @@
                             </div>
                             <div class="candidate-actions">
                                 <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', id=candidate.id) }}">View</a>
+                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
                             </div>
+                        </div>
+                        {% else %}
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            No candidates in this status
                         </div>
                         {% endfor %}
                     </div>
@@ -348,7 +375,7 @@
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('statusModal').style.display='none'">&times;</span>
             <h2>Update Candidate Status</h2>
-            <form id="statusForm" action="{{ url_for('update_status') }}" method="POST">
+            <form id="statusForm" action="{{ url_for('update_status', candidate_id=0) }}" method="POST">
                 <input type="hidden" id="candidateId" name="candidate_id">
                 <div class="form-group">
                     <label for="status" class="required">Status</label>
@@ -378,6 +405,7 @@
         // Function to open status modal with candidate ID
         function openStatusModal(candidateId) {
             document.getElementById('candidateId').value = candidateId;
+            document.getElementById('statusForm').action = `/update_status/${candidateId}`;
             document.getElementById('statusModal').style.display = 'block';
             return false;
         }
@@ -397,12 +425,6 @@
             if (event.target == document.getElementById('statusModal')) {
                 document.getElementById('statusModal').style.display = 'none';
             }
-        }
-        
-        // Function to open candidate details (would need implementation)
-        function openCandidateModal(candidateId) {
-            // You can implement this to show more details in a modal
-            window.location.href = `/candidate/${candidateId}`;
         }
     </script>
 </body>
