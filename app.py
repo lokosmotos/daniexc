@@ -82,53 +82,52 @@ def dashboard():
     if current_user.role == 'HR':
         # Initialize all possible statuses
         all_statuses = [
-    'New Application',
-    'Interview Scheduled',
-    'Practical Test Scheduled',
-    'Offer Sent',
-    'Hired',
-    'KIV',
-    'Rejected',
-    'WL',
-    'Withdraw'
-]
-
-today = datetime.today().date()
-    today_interviews = Candidate.query.filter(
-    Candidate.status == 'Interview Scheduled',
-    Candidate.interview_date == today
-).all()
-
-    
-    return render_template('dashboard.html', 
-                         today_interviews=today_interviews
+            'New Application',
+            'Interview Scheduled',
+            'Practical Test Scheduled',
+            'Offer Sent',
+            'Hired',
+            'KIV',
+            'Rejected',
+            'WL',
+            'Withdraw'
         ]
-        
+
+        today = datetime.today().date()
+        today_interviews = Candidate.query.filter(
+            Candidate.status == 'Interview Scheduled',
+            Candidate.date_iv == today  # Note: field is 'date_iv' not 'interview_date'
+        ).all()
+
         # Get status counts
         status_counts = defaultdict(int)
         counts = db.session.query(
             Candidate.status,
             func.count(Candidate.id)
         ).group_by(Candidate.status).all()
-        
+
         for status, count in counts:
             status_counts[status] = count
-        
+
         # Ensure all statuses are represented
         for status in all_statuses:
             if status not in status_counts:
                 status_counts[status] = 0
-        
+
         candidates = Candidate.query.order_by(Candidate.date_created.desc()).all()
-        
-        return render_template('dashboard.html',
-                           user=current_user,
-                           candidates=candidates,
-                           status_counts=dict(status_counts),
-                           current_date=datetime.now().strftime('%Y-%m-%d'))
+
+        return render_template(
+            'dashboard.html',
+            user=current_user,
+            candidates=candidates,
+            status_counts=dict(status_counts),
+            today_interviews=today_interviews,
+            current_date=datetime.now().strftime('%Y-%m-%d')
+        )
     else:
         flash('Access denied.')
         return redirect(url_for('login'))
+
 
 @app.route('/schedule_interview', methods=['POST'])
 def schedule_interview():
