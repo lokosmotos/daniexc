@@ -5,11 +5,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from collections import defaultdict
 from sqlalchemy import func
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hr_system.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
