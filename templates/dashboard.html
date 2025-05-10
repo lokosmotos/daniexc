@@ -106,38 +106,35 @@
         </div>
         
         <div class="card">
-            <h2>Candidates by Status</h2>
-            <div class="status-pools">
-                <!-- Interview Scheduled Pool - Enhanced -->
-                <div class="status-pool status-Interview-Scheduled">
-                    <div class="pool-header">
-                        <h3>Interview Scheduled <span class="status-badge">{{ status_counts.get('Interview Scheduled', 0) }}</span></h3>
-                        <span class="bulk-action" onclick="openBulkScheduleModal()">Bulk Schedule</span>
-                    </div>
-                    <div class="pool-content">
-                        {% for candidate in candidates if candidate.status == 'Interview Scheduled' %}
-                        <div class="candidate-card">
-                            <div class="candidate-name">{{ candidate.name }}</div>
-                            <div class="candidate-details">
-                                {{ candidate.position }} | {{ candidate.branch }}
-                            </div>
-                            {% if candidate.date_iv %}
-                            <div class="interview-info">
-                                Scheduled: <span class="interview-date">{{ candidate.date_iv.strftime('%Y-%m-%d %I:%M %p') }}</span>
-                            </div>
-                            {% else %}
-                            <div class="interview-info">
-                                Not yet scheduled
-                            </div>
-                            {% endif %}
-                            <div class="candidate-actions">
-                                <a href="#" onclick="event.stopPropagation();openInterviewModal('{{ candidate.id }}')">
-                                    {{ 'Reschedule' if candidate.date_iv else 'Schedule' }}
-                                </a>
-                                <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
-                                <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
-                            </div>
-                        </div>
+            div class="card">
+    <h2>Add Candidate Pool</h2>
+    <div class="status-pool status-Add-Candidate">
+        <div class="pool-header">
+            <h3>Recently Added Candidates <span class="status-badge">{{ recent_candidates|length }}</span></h3>
+        </div>
+        <div class="pool-content">
+            {% for candidate in recent_candidates %}
+            <div class="candidate-card">
+                <div class="candidate-name">{{ candidate.name }}</div>
+                <div class="candidate-details">
+                    {{ candidate.position }} | {{ candidate.branch }} | {{ candidate.status }}
+                </div>
+                <div class="candidate-actions">
+                    <a href="#" onclick="event.stopPropagation();openInterviewModal('{{ candidate.id }}')">
+                        Schedule Interview
+                    </a>
+                    <a href="#" onclick="event.stopPropagation();openStatusModal('{{ candidate.id }}')">Update Status</a>
+                    <a href="{{ url_for('view_candidate', candidate_id=candidate.id) }}">View</a>
+                </div>
+            </div>
+            {% else %}
+            <div style="padding: 20px; text-align: center; color: #999;">
+                No recently added candidates
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
                         {% else %}
                         <div style="padding: 20px; text-align: center; color: #999;">
                             No candidates in this status
